@@ -1,25 +1,15 @@
 <script setup lang="ts">
-
-</script>
+import AppHeader from "./components/AppHeader.vue";
+import {NMessageProvider} from "naive-ui";</script>
 
 <template>
+  <n-message-provider>
+    <AppHeader/>
 
-  <nav class="navi-bar">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/404">NotFound</router-link>
-  </nav>
+    <router-view class="mt-10"></router-view>
+  </n-message-provider>
 
-  <router-view></router-view>
 </template>
 
 <style scoped>
-
-.navi-bar {
-  position: fixed;
-  top: 0;
-  padding: 0 30px;
-  height: 50px;
-  width: 100vw;
-}
-
 </style>
