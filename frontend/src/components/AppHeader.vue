@@ -46,10 +46,9 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {NAvatar, NDropdown, useMessage} from "naive-ui";
+import {NAvatar, NDropdown} from "naive-ui";
 import {useI18n} from "vue-i18n";
-
-const message = useMessage()
+import {successMsg} from "../utils/util";
 
 const languageOptions = [
   {
@@ -71,7 +70,7 @@ const {t, locale} = useI18n();
 const showDropdown = ref(false)
 
 function handleSelect(key: string | number) {
-  message.info(String(key))
+  successMsg(String(key))
   locale.value = String(key)
 }
 

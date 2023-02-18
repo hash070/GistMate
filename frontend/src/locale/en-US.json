@@ -1,5 +1,17 @@
 {
   "hello": "Hello World",
   "home": "Home",
-  "language": "Language"
+  "language": "Language",
+  "hint": {
+    "network_success": "Network success",
+    "network_error": "Network error",
+    "input_key": "Please input your GitHub gist api key",
+    "api_key": "GitHub gist API Key"
+  },
+  "login": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Login success, welcome back",
+    "failed": "Login failed, please check your api key"
+  }
 }
