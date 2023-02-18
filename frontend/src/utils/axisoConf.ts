@@ -5,6 +5,7 @@ import {iT} from "./util";
 axios.defaults.baseURL = "https://api.github.com";
 // github api version
 // I don't know why when I added this header, the request would fail (CORS error)
+// This is a bug of github api: https://github.com/community/community/discussions/40619
 // axios.defaults.headers.common['X-GitHub-Api-Version'] = '2022-11-28'
 
 

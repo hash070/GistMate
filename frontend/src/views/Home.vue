@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <div id="home-root">
     <AppMenu />
   </div>
 </template>
@@ -9,6 +9,6 @@ import AppMenu from "../components/AppMenu.vue";
 
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+@import "../style";
 </style>

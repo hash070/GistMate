@@ -29,17 +29,6 @@ async function onKeySubmit() {
       }).finally(() => {
     isLoading.value = false
   })
-  /*  try {
-      const res = await axios.get('/gists/public')
-      successMsg(iT('login.success'))
-      isModalShow.value = false
-      console.log(res)
-    } catch (err) {
-      console.log(err)
-      errorMsg(iT('login.failed'))
-    } finally {
-      isLoading.value = false
-    }*/
 }
 
 onMounted(() => {
@@ -70,7 +59,7 @@ onMounted(() => {
 <template>
   <n-config-provider preflight-style-disabled :theme="theme">
     <AppHeader/>
-    <router-view class="mt-14"></router-view>
+    <router-view class="router-view"></router-view>
     <n-modal
         v-model:show="isModalShow"
         :closable="false"
@@ -99,5 +88,17 @@ onMounted(() => {
 
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "style";
+.router-view {
+  padding-top: 3rem;
+  height: calc(100vh - 3rem);
+}
+.w-96 {
+  width: 24rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 </style>

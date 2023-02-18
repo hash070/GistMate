@@ -1,5 +1,5 @@
 import {createApp} from 'vue'
-// import './tailwind.css'
+import "./style.scss"
 import App from './App.vue'
 import router from "./router/AppRouter";
 import {createI18n} from 'vue-i18n'

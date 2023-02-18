@@ -1,9 +1,8 @@
 <template>
   <n-space vertical>
-    <n-layout has-sider
-    >
+    <n-layout has-sider>
       <n-layout-sider
-          class="fixed left-0 top-14 bottom-0 bg-white z-10"
+          id="side-menu"
           :native-scrollbar="false"
           bordered
           collapse-mode="width"
@@ -22,23 +21,21 @@
             :options="menuOptions"
         />
       </n-layout-sider>
-      <n-layout>
-        <span>Content</span>
+      <n-layout
+          id="content"
+          :native-scrollbar="false"
+      >
+        <p>Content</p>
       </n-layout>
     </n-layout>
   </n-space>
 </template>
 
 <script setup lang="ts">
-import {Component, h, onMounted, ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import type {MenuOption} from 'naive-ui'
-import {
-  BookOutline as BookIcon,
-  PersonOutline as PersonIcon,
-  WineOutline as WineIcon
-} from '@vicons/ionicons5'
-import {NIcon, NLayout, NLayoutSider, NMenu, NSpace} from 'naive-ui'
-import axios from "axios";
+import {NLayout, NLayoutSider, NMenu, NSpace} from 'naive-ui'
+import {BookOutline as BookIcon, PersonOutline as PersonIcon, WineOutline as WineIcon} from '@vicons/ionicons5'
 import {renderIcon} from "../utils/util";
 
 const menuOptions: MenuOption[] = [
@@ -125,14 +122,11 @@ onMounted(() => {
 const activeKey = ref<string | null>(null);
 const collapsed = ref(false);
 
-/* export default defineComponent({
-   components: {NSpace, NSwitch, NLayout, NLayoutSider, NMenu},
-   setup() {
-     return {
-       activeKey: ref<string | null>(null),
-       collapsed: ref(false),
-       menuOptions
-     }
-   }
-})*/
 </script>
+<style lang="scss" scoped>
+@import "../style";
+
+#side-menu, #content {
+  height: calc(100vh - 3rem);
+}
+</style>
