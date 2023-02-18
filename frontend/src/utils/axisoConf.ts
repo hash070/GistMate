@@ -1,6 +1,6 @@
 import axios from "axios";
 import {i18n} from "../main";
-import {iT} from "./util";
+import {errorLoadingBar, finishLoadingBar, iT, startLoadingBar} from "./util";
 
 axios.defaults.baseURL = "https://api.github.com";
 // github api version
@@ -13,10 +13,12 @@ axios.interceptors.request.use(
     config => {
         // before request is sent
         config.headers.set('Authorization', "Bearer " + localStorage.getItem('gistKey'))
+        startLoadingBar()
         return config
     },
     error => {
-        // on
+        // on request error
+        errorLoadingBar()
         return Promise.reject(error)
     }
 )
@@ -26,11 +28,26 @@ axios.interceptors.response.use(
         // http code in range 2xx will trigger this function
         // successMsg(i18n.global.t('hint.network_success'))
         console.log(iT('hint.network_success'))
+        if (response.headers){
+            // log x-ratelimit-limit
+            console.log('x-ratelimit-limit:', response.headers['x-ratelimit-limit'])
+            // log x-ratelimit-used
+            console.log('x-ratelimit-used:', response.headers['x-ratelimit-used'])
+            // log x-ratelimit-remaining
+            console.log('x-ratelimit-remaining:', response.headers['x-ratelimit-remaining'])
+            // log x-ratelimit-reset
+            console.log('x-ratelimit-reset:', response.headers['x-ratelimit-reset'])
+            // log time of reset date
+            console.log('reset date:', new Date(response.headers['x-ratelimit-reset'] * 1000))
+        }
+
+        finishLoadingBar()
         return response
     },
     function (error) {
         // http code over range 2xx will trigger this function
         console.log('error:', error, i18n.global.t('hint.network_error'))
+        errorLoadingBar()
         return Promise.reject(error)
     }
 )

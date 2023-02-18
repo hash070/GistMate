@@ -11,7 +11,7 @@
   "login": {
     "submit": "Submit",
     "cancel": "Cancel",
-    "success": "Login success, welcome back",
-    "failed": "Login failed, please check your api key"
+    "success": "Gist fetch success, welcome back",
+    "failed": "Gist fetch failed, please check your api key"
   }
 }

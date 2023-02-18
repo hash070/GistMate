@@ -6,8 +6,8 @@ import {Component, h} from "vue";
 const {message, notification, dialog, loadingBar} = createDiscreteApi(
     ['message', 'dialog', 'notification', 'loadingBar'],
     {
-        configProviderProps: store.configProviderPropsRef,
-        messageProviderProps: store.messageProviderProps
+        configProviderProps: store.provider.configProviderPropsRef,
+        messageProviderProps: store.provider.messageProviderProps
     }
 )
 
@@ -21,6 +21,21 @@ export const errorMsg = (msg: string) => {
 
 export const infoMsg = (msg: string) => {
     message.info(msg)
+}
+
+//start loading bar
+export const startLoadingBar = () => {
+    loadingBar.start()
+}
+
+//finish loading bar
+export const finishLoadingBar = () => {
+    loadingBar.finish()
+}
+
+//error loading bar
+export const errorLoadingBar = () => {
+    loadingBar.error()
 }
 
 export const iT = (key: string) => {
