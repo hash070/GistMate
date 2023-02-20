@@ -7,6 +7,8 @@ axios.defaults.baseURL = "https://api.github.com";
 // I don't know why when I added this header, the request would fail (CORS error)
 // This is a bug of github api: https://github.com/community/community/discussions/40619
 // axios.defaults.headers.common['X-GitHub-Api-Version'] = '2022-11-28'
+// add accept header
+axios.defaults.headers.common['Accept'] = 'application/vnd.github+json'
 
 
 axios.interceptors.request.use(

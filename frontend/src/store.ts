@@ -17,5 +17,8 @@ export const store = reactive({
     gistsData: null as object | null,
     loading: {
         menu: false
+    },
+    editor: {
+        textVal: "",
     }
 })

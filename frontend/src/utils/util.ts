@@ -49,27 +49,6 @@ export const renderIcon = (icon: Component) => {
 
 //set store.menuOptions from axios response
 export const setMenuOptionsFromAxiosResponse = (res: any) => {
-    /*          res.data.map((gist: any) => {
-            store.menuOptions = [
-              ...store.menuOptions,
-              {
-                label: gist.description,
-                key: gist.id,
-                icon: renderIcon(LibraryIcon),
-                //file is a object, not an array
-                //need to use Object.keys to get the keys
-                children: Object.keys(gist.files).map((child: any) => {
-                  return {
-                    label: gist.files[child].filename,
-                    key: gist.files[child].filename,
-                    icon: renderIcon(BookIcon),
-                    // to: '/gist/'+gist.id+'/'+child.filename
-                  }
-                })
-              }
-            ]
-          })*/
-    //I should set store.menuOptions after the loop
     let tempMenuOptions: any = []
     res.data.map((gist: any) => {
         //if the description is "", set it to 'Untitled'
@@ -88,7 +67,7 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                 children: Object.keys(gist.files).map((child: any) => {
                     return {
                         label: gist.files[child].filename,
-                        key: gist.files[child].filename,
+                        key: gist.files[child].raw_url,
                         icon: renderIcon(BookIcon),
                         // to: '/gist/'+gist.id+'/'+child.filename
                     }

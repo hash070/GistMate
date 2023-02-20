@@ -1,13 +1,15 @@
 import {createApp} from 'vue'
 import "./style.scss"
 import App from './App.vue'
-import router from "./router/AppRouter";
+import router from "./AppRouter";
 import {createI18n} from 'vue-i18n'
 import "./utils/axisoConf"
 // import VueI18n from 'vue-i18n'
 import en_US from "./locale/en-US.json";
 import ja_JP from "./locale/ja-JP.json";
 import zh_CN from "./locale/zh-CN.json";
+// @ts-ignore
+import VMdEditor from "./utils/mdEditor";
 
 export const i18n = createI18n({
     legacy: false,
@@ -23,4 +25,5 @@ export const i18n = createI18n({
 createApp(App)
     .use(i18n)
     .use(router)
+    .use(VMdEditor)
     .mount('#app')

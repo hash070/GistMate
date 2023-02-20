@@ -21,6 +21,7 @@
           </template>
           <n-menu
               v-model:value="activeKey"
+              @update:expanded-keys="handleMenuExpand"
               @update:value="handleMenuClick"
               :collapsed="collapsed"
               :collapsed-width="64"
@@ -34,7 +35,12 @@
           id="content"
           :native-scrollbar="false"
       >
-        <p>Content</p>
+        <v-md-editor
+            v-model="store.editor.textVal"
+            height="calc(100vh - 3rem)"
+            :include-level="[1 ,2, 3]"
+            @save="handleSave"
+        ></v-md-editor>
       </n-layout>
     </n-layout>
   </n-space>
@@ -42,9 +48,14 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {NIcon, NLayout, NLayoutSider, NMenu, NSpace, NSpin} from 'naive-ui'
+import {MenuOption, NIcon, NLayout, NLayoutSider, NMenu, NSpace, NSpin} from 'naive-ui'
 import {store} from '../store'
 import {IconRefresh} from '@tabler/icons-vue';
+import axios from "axios";
+
+const handleSave = (text: string, html: string) => {
+  console.log('Save action:', text)
+}
 
 /*
 // Render icons on setup function, worked, but it seems to be not necessary
@@ -66,15 +77,28 @@ import {IconRefresh} from '@tabler/icons-vue';
 
 onMounted(() => {
   console.log('menu mounted')
-
 })
 
 
 const activeKey = ref<string | null>(null);
 const collapsed = ref(false);
 
-const handleMenuClick = (key: any) => {
-  console.log(`Clicked menu item with key "${key}"`);
+const handleMenuExpand = (keys: string[]) => {
+  console.log('expandedKey:', keys)
+};
+
+const handleMenuClick = (key: string, item: MenuOption) => {
+  console.log('click:', key, item)
+  //create a new axios instance to bypass global interceptors
+  //because extra headers would cause CORS error
+  axios.create().request({
+    method: 'get',
+    url: key,
+  }).then(function (response) {
+    store.editor.textVal = response.data
+  }).catch(function (error) {
+    console.log(error);
+  });
 };
 
 </script>
