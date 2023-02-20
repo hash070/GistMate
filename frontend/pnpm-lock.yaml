@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@tabler/icons-vue': ^2.4.0
   '@vicons/ionicons5': ^0.12.0
   '@vitejs/plugin-vue': ^4.0.0
   axios: ^1.3.3
@@ -15,6 +16,7 @@ specifiers:
   vue-tsc: ^1.0.24
 
 dependencies:
+  '@tabler/icons-vue': 2.4.0_vue@3.2.47
   '@vicons/ionicons5': 0.12.0
   axios: 1.3.3
   naive-ui: 2.34.3_vue@3.2.47
@@ -313,6 +315,19 @@ packages:
 
   /@juggle/resize-observer/3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
+    dev: false
+
+  /@tabler/icons-vue/2.4.0_vue@3.2.47:
+    resolution: {integrity: sha512-3621GqN5Ae/LS8WeULWFBRhw3iyz27hacbLnWDEZRzotP3hprhqQSiS6IBTpC8ytgXC25gaakmPeVMuzH03BAg==}
+    peerDependencies:
+      vue: '>=3.0.1'
+    dependencies:
+      '@tabler/icons': 2.4.0
+      vue: 3.2.47
+    dev: false
+
+  /@tabler/icons/2.4.0:
+    resolution: {integrity: sha512-JZY9Kk3UsQoqp7Rw/BuWw1PrkRwv5h0psjJBbj+Cn9UVyhdzr5vztg2mywXBAJ+jFBUL/pjnVcIvOzKFw4CXng==}
     dev: false
 
   /@types/katex/0.14.0:

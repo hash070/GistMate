@@ -15,4 +15,7 @@ export const store = reactive({
     } as MaybeRef<any> | undefined,
     menuOptions: [] as MenuOption[],
     gistsData: null as object | null,
+    loading: {
+        menu: false
+    }
 })

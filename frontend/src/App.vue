@@ -3,8 +3,7 @@ import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
 import {NButton, NConfigProvider, NInput, NModal} from 'naive-ui'
-import {BookOutline as BookIcon, LibraryOutline as LibraryIcon} from '@vicons/ionicons5'
-import {errorMsg, infoMsg, iT, renderIcon, successMsg} from "./utils/util";
+import {errorMsg, infoMsg, iT, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
 
@@ -19,12 +18,16 @@ const gistKey = ref('')
 function onKeySubmit() {
   localStorage.setItem('gistKey', gistKey.value)
   isLoading.value = true
+  //activate menu loading spin
+  store.loading.menu = true
   console.log('confirm')
   axios.get('/gists')
       .then((res) => {
         successMsg(iT('login.success'))
         isModalShow.value = false
         console.log(res)
+        // process data (array) and push into store.menuOptions
+        setMenuOptionsFromAxiosResponse(res)
       })
       .catch((err) => {
         console.log(err)
@@ -32,6 +35,8 @@ function onKeySubmit() {
         localStorage.removeItem('gistKey')
       }).finally(() => {
     isLoading.value = false
+    //deactivate menu loading spin
+    store.loading.menu = false
   })
 }
 
@@ -39,135 +44,26 @@ onMounted(() => {
   const gistKey = localStorage.getItem('gistKey')
   if (gistKey) {
     console.log('gist key detected, trying to login')
+    //activate menu loading spin
+    store.loading.menu = true
     axios.get('/gists')
         .then((res) => {
           successMsg(iT('login.success'))
           console.log(res)
-          // process data and store in store.gistsData
+          //store all gist data into store.gistsData
           store.gistsData = res.data
           // process data (array) and push into store.menuOptions
-/*          res.data.map((gist: any) => {
-            store.menuOptions = [
-              ...store.menuOptions,
-              {
-                label: gist.description,
-                key: gist.id,
-                icon: renderIcon(LibraryIcon),
-                //file is a object, not an array
-                //need to use Object.keys to get the keys
-                children: Object.keys(gist.files).map((child: any) => {
-                  return {
-                    label: gist.files[child].filename,
-                    key: gist.files[child].filename,
-                    icon: renderIcon(BookIcon),
-                    // to: '/gist/'+gist.id+'/'+child.filename
-                  }
-                })
-              }
-            ]
-          })*/
-          //I should set store.menuOptions after the loop
-          let tempMenuOptions: any = []
-          res.data.map((gist: any) => {
-            tempMenuOptions = [
-              ...tempMenuOptions,
-              {
-                label: gist.description,
-                key: gist.id,
-                icon: renderIcon(LibraryIcon),
-                //file is a object, not an array
-                //need to use Object.keys to get the keys
-                children: Object.keys(gist.files).map((child: any) => {
-                  return {
-                    label: gist.files[child].filename,
-                    key: gist.files[child].filename,
-                    icon: renderIcon(BookIcon),
-                    // to: '/gist/'+gist.id+'/'+child.filename
-                  }
-                })
-              }
-            ]
-          })
-          store.menuOptions = tempMenuOptions
-/*
-          console.log('store.menuOptions', store.menuOptions)
-          //test performance
-          for (let i = 0; i < 10000; i++) {
-            tempMenuOptions= [
-              ...tempMenuOptions,
-              {
-                label: "test",
-                key: "test",
-                icon: renderIcon(LibraryIcon),
-                children: [{
-                  label: "testChild",
-                  key: "test",
-                  icon: renderIcon(BookIcon),
-                  // to: '/gist/'+gist.id+'/'+child.filename
-                }]
-              }
-            ]
-          }
-          store.menuOptions = tempMenuOptions*/
+          setMenuOptionsFromAxiosResponse(res)
         })
         .catch((err) => {
           console.log(err)
           errorMsg(iT('login.failed'))
           localStorage.removeItem('gistKey')
         })
-    /*
-    //Just a test, it works fine
-        store.menuOptions = [
-          {
-            label: iT('menu.home'),
-            key: 'home',
-            children: [
-              {
-                label: iT('menu.home'),
-                key: 'home',
-                to: '/home'
-              },
-              {
-                label: iT('menu.about'),
-                key: 'about',
-                to: '/about'
-              }
-            ]
-          },
-          {
-            label: iT('menu.user'),
-            key: 'user',
-            children: [
-              {
-                label: iT('menu.user'),
-                key: 'user',
-                to: '/user'
-              },
-              {
-                label: iT('menu.user'),
-                key: 'user',
-                to: '/user'
-              }
-            ]
-          },
-          {
-            label: iT('menu.wine'),
-            key: 'wine',
-            children: [
-              {
-                label: iT('menu.wine'),
-                key: 'wine',
-                to: '/wine'
-              },
-              {
-                label: iT('menu.wine'),
-                key: 'wine',
-                icon: renderIcon(PersonIcon),
-                to: '/wine'
-              }
-            ]
-          }
-        ]*/
+        .finally(() => {
+          //deactivate menu loading spin
+          store.loading.menu = false
+        })
   } else {
     console.log('gistKey is null, please input your gist key')
     infoMsg(iT('hint.input_key'))
@@ -189,7 +85,7 @@ onMounted(() => {
         :bordered="false"
         :mask-closable="false"
         :loading="isLoading"
-        class="w-96"
+        style="max-width: 400px"
         preset="card"
         :title="$t('hint.input_key')"
         :positive-text="$t('login.submit')"

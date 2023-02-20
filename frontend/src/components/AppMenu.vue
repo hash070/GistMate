@@ -13,13 +13,22 @@
           @collapse="collapsed = true"
           @expand="collapsed = false"
       >
-        <n-menu
-            v-model:value="activeKey"
-            :collapsed="collapsed"
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :options="store.menuOptions"
-        />
+        <n-spin :show="store.loading.menu">
+          <template #icon style="display: flex;align-items: center">
+            <n-icon>
+              <IconRefresh/>
+            </n-icon>
+          </template>
+          <n-menu
+              v-model:value="activeKey"
+              @update:value="handleMenuClick"
+              :collapsed="collapsed"
+              :collapsed-width="64"
+              style="min-height: calc(100vh - 3rem);"
+              :collapsed-icon-size="22"
+              :options="store.menuOptions"
+          />
+        </n-spin>
       </n-layout-sider>
       <n-layout
           id="content"
@@ -33,10 +42,9 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {NLayout, NLayoutSider, NMenu, NSpace} from 'naive-ui'
-import {BookOutline as BookIcon,LibraryOutline as LibraryIcon} from '@vicons/ionicons5'
-import {renderIcon} from "../utils/util";
+import {NIcon, NLayout, NLayoutSider, NMenu, NSpace, NSpin} from 'naive-ui'
 import {store} from '../store'
+import {IconRefresh} from '@tabler/icons-vue';
 
 /*
 // Render icons on setup function, worked, but it seems to be not necessary
@@ -64,6 +72,10 @@ onMounted(() => {
 
 const activeKey = ref<string | null>(null);
 const collapsed = ref(false);
+
+const handleMenuClick = (key: any) => {
+  console.log(`Clicked menu item with key "${key}"`);
+};
 
 </script>
 <style lang="scss" scoped>
