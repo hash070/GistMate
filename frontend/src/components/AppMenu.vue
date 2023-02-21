@@ -342,10 +342,10 @@ const handleSave = (text: string, html?: string) => {
 const handleDeleteGistFile = () => {
   console.log('Delete action')
   getDialog().warning({
-    title: '警告',
-    content: '你确定？',
-    positiveText: '确定',
-    negativeText: '不确定',
+    title: 'Warning',
+    content: 'Are you sure?',
+    positiveText: 'Yes',
+    negativeText: 'No',
     onPositiveClick: () => {
       infoMsg(iT('hint.delete_gist_file_action_started'))
       axios.patch('/gists/' + currentGistId.value, {
@@ -555,7 +555,22 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     //TODO: create new gist
     console.log('create new gist')
     store.app.isNewGistModalShow = true
-  } else {
+  }else if (key === "delete") {
+    console.log('delete gist:', item.parentKey)
+    getDialog().warning({
+      title: iT('hint.delete_gist_collection'),
+      content: iT('hint.delete_gist_collection_confirm'),
+      positiveText: 'Yes',
+      negativeText: 'No',
+      onPositiveClick: () => {
+        infoMsg(iT('hint.delete_gist_collection'))
+      },
+      onNegativeClick: () => {
+        infoMsg(iT('hint.delete_gist_collection_action_cancelled'))
+      }
+    })
+  }
+  else {
     //TODO: ask user if they want to save the changes
     cleanUpEditor()
     //create a new axios instance to bypass global interceptors

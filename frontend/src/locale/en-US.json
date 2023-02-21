@@ -18,7 +18,13 @@
     "delete_gist_file_action_started": "Delete gist file action started",
     "delete_gist_file_action_cancelled": "Delete gist file action cancelled",
     "delete_gist_file_action_success": "Delete gist file action success",
-    "delete_gist_file_action_failed": "Delete gist file action failed"
+    "delete_gist_file_action_failed": "Delete gist file action failed",
+    "delete_gist_collection": "Delete gist collection",
+    "delete_gist_collection_confirm": "Are you sure to delete this gist collection?",
+    "delete_gist_collection_action_started": "Delete gist collection action started",
+    "delete_gist_collection_action_success": "Delete gist collection action success",
+    "delete_gist_collection_action_failed": "Delete gist collection action failed",
+    "delete_gist_collection_action_cancelled": "Delete gist collection action cancelled"
   },
   "login": {
     "submit": "Submit",

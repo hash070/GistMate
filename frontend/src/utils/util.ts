@@ -3,7 +3,7 @@ import {store} from "../store"
 import {i18n} from "../main";
 import {Component, h} from "vue";
 import {BookOutline as BookIcon, LibraryOutline as LibraryIcon} from "@vicons/ionicons5";
-import {IconFilePlus} from '@tabler/icons-vue';
+import {IconFilePlus, IconTrashX} from '@tabler/icons-vue';
 import axios from "axios";
 import {DialogApiInjection} from "naive-ui/es/dialog/src/DialogProvider";
 
@@ -97,6 +97,7 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
             gist.description = iT('gist.untitled')
         }
 
+
         tempMenuOptions = [
             ...tempMenuOptions,
             {
@@ -115,7 +116,14 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                         updatedAt: gist.updated_at,
                         // to: '/gist/'+gist.id+'/'+child.filename
                     }
-                })
+                }).concat({
+                    label: iT('gist.delete_gist_collection'),
+                    key: 'delete',
+                    icon: renderIcon(IconTrashX),
+                    parentKey: gist.id,
+                    isPublic: gist.public,
+                    updatedAt: gist.updated_at,
+                }) // Add the delete object to the end of children array
             }
         ]
     })
