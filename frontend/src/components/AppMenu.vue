@@ -141,6 +141,7 @@
                   icon-placement="left"
                   strong secondary
                   type="error"
+                  @click="handleDeleteGistFile"
               >
                 <template #icon>
                   <n-icon>
@@ -287,6 +288,7 @@ import axios from "axios";
 import {
   errorMsg,
   finishLoadingBar,
+  getDialog,
   getNoInterceptorAxios,
   infoMsg,
   iT,
@@ -296,6 +298,7 @@ import {
   updateGistData
 } from "../utils/util";
 
+//save gist file
 const handleSave = (text: string, html?: string) => {
   console.log('Save action:', text)
 
@@ -329,9 +332,41 @@ const handleSave = (text: string, html?: string) => {
   //update save flag
   store.editor.isLatestSaved = true
   console.log("handleSave: isLatestSaved", store.editor.isLatestSaved)
+  gistFileContentBeforeEdit = text
   //update last save time
   lastTypingDate.value = new Date()
   console.log('lastTypingDate', lastTypingDate.value)
+}
+
+//handle delete gist file
+const handleDeleteGistFile = () => {
+  console.log('Delete action')
+  getDialog().warning({
+    title: '警告',
+    content: '你确定？',
+    positiveText: '确定',
+    negativeText: '不确定',
+    onPositiveClick: () => {
+      infoMsg(iT('hint.delete_gist_file_action_started'))
+      axios.patch('/gists/' + currentGistId.value, {
+        files: {
+          [store.editor.filename]: null
+        }
+      }).then((res) => {
+        console.log(res)
+        successMsg(iT('hint.delete_gist_file_action_success'))
+        handleEditorClose()
+        //refresh gist menu
+        loadGistsDataToMenu()
+      }).catch((err) => {
+        console.log(err)
+        errorMsg(iT('hint.delete_gist_file_action_failed'))
+      })
+    },
+    onNegativeClick: () => {
+      infoMsg(iT('hint.delete_gist_file_action_cancelled'))
+    }
+  })
 }
 
 /*
@@ -426,7 +461,7 @@ const isFirstEdit = ref(true)
 
 //save the filename before edit, for renaming
 let gistFileNameBeforeEdit = ''
-//save the gist file content before edit, for comparing
+//save the gist file content before edit, for comparing, to avoid unnecessary update
 let gistFileContentBeforeEdit = ''
 
 const publicOrPrivateSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {

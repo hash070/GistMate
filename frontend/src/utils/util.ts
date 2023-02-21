@@ -5,6 +5,7 @@ import {Component, h} from "vue";
 import {BookOutline as BookIcon, LibraryOutline as LibraryIcon} from "@vicons/ionicons5";
 import {IconFilePlus} from '@tabler/icons-vue';
 import axios from "axios";
+import {DialogApiInjection} from "naive-ui/es/dialog/src/DialogProvider";
 
 //no interceptor axios
 const noInterceptorAxios = axios.create()
@@ -42,6 +43,11 @@ export const finishLoadingBar = () => {
 //error loading bar
 export const errorLoadingBar = () => {
     loadingBar.error()
+}
+
+//get a dialog instance
+export const getDialog = ():DialogApiInjection => {
+    return dialog
 }
 
 export const iT = (key: string) => {

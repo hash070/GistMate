@@ -14,7 +14,11 @@
     "save_success": "Save success",
     "save_failed": "Save failed",
     "file_name_update_success": "File name update success",
-    "file_name_update_failed": "File name update failed, duplicate file name is not allowed"
+    "file_name_update_failed": "File name update failed, duplicate file name is not allowed",
+    "delete_gist_file_action_started": "Delete gist file action started",
+    "delete_gist_file_action_cancelled": "Delete gist file action cancelled",
+    "delete_gist_file_action_success": "Delete gist file action success",
+    "delete_gist_file_action_failed": "Delete gist file action failed"
   },
   "login": {
     "submit": "Submit",
