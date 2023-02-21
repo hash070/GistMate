@@ -12,9 +12,9 @@
     "visibility_is_unchangeable": "Visibility is unchangeable after creation",
     "request_failed": "Request failed",
     "save_success": "Save success",
+    "save_failed": "Save failed",
     "file_name_update_success": "File name update success",
-    "file_name_update_failed": "File name update failed",
-    "save_failed": "Save failed"
+    "file_name_update_failed": "File name update failed, duplicate file name is not allowed"
   },
   "login": {
     "submit": "Submit",
@@ -33,6 +33,8 @@
     "create": "Create",
     "file_name": "File name",
     "create_new_gist_file": "Create new gist file",
+    "create_new_gist_file_success": "Create new gist file success",
+    "create_new_gist_file_failed": "Create new gist file failed",
     "create_new_gist_collection": "New gist collection",
     "delete_gist_file": "Delete this gist file",
     "delete_gist_collection": "Delete this gist collection",

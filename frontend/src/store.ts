@@ -17,6 +17,7 @@ export const store = reactive({
     app: {
         isKeyInputModalShow: false,
         isNewGistModalShow: false,
+        isNewGistFileModalShow: false,
     },
     gistsData: [] as Array<object>,
     loading: {
@@ -27,5 +28,6 @@ export const store = reactive({
         textVal: "",
         filename: "",
         openingFile: false,//is currently opening file
+        isLatestSaved: true,//saving status flag
     }
 })

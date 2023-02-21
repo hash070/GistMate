@@ -51,6 +51,7 @@
                 <n-switch
                     :rail-style="viewOrEditSwitchStyle"
                     v-model:value="isInEditMode"
+                    @update:value="handleViewModeChange"
                     style="padding-left: 1rem"
                 >
                   <template #checked>
@@ -127,6 +128,7 @@
               <n-button
                   icon-placement="left"
                   secondary strong
+                  @click="()=>{store.app.isNewGistFileModalShow = true}"
               >
                 <template #icon>
                   <n-icon>
@@ -180,7 +182,7 @@
           :closable="true"
           :bordered="false"
           :mask-closable="true"
-          :loading="isLoading"
+          :loading="isModalActionLoading"
           style="max-width: 400px"
           preset="card"
           :title="$t('hint.input_new_gist_collection')"
@@ -224,9 +226,35 @@
           </n-tooltip>
 
           <n-button
-              :loading="isLoading"
+              :loading="isModalActionLoading"
               :disabled="newGistCollectionName === ''|| newGistName === ''"
               @click="onNewGistSubmit"
+          >
+            {{ $t('login.submit') }}
+          </n-button>
+        </div>
+      </n-modal>
+
+      <n-modal
+          v-model:show="store.app.isNewGistFileModalShow"
+          :closable="true"
+          :bordered="false"
+          :mask-closable="true"
+          :loading="isModalActionLoading"
+          style="max-width: 400px"
+          preset="card"
+          :title="$t('hint.input_new_gist_collection')"
+          :positive-text="$t('login.submit')"
+      >
+        <n-input
+            v-model:value="newGistFileName"
+            :placeholder="$t('hint.input_new_gist_collection')"
+        />
+        <div id="submit-box">
+          <n-button
+              :loading="isModalActionLoading"
+              :disabled="newGistFileName === ''"
+              @click="handleNewGistFile"
           >
             {{ $t('login.submit') }}
           </n-button>
@@ -268,7 +296,7 @@ import {
   updateGistData
 } from "../utils/util";
 
-const handleSave = (text: string, html: string) => {
+const handleSave = (text: string, html?: string) => {
   console.log('Save action:', text)
 
   //if the file name is changed, update the file name before update the content
@@ -299,7 +327,8 @@ const handleSave = (text: string, html: string) => {
     updateGistData(currentGistId.value, text)
   }
   //update save flag
-  isLatestSaved.value = true
+  store.editor.isLatestSaved = true
+  console.log("handleSave: isLatestSaved", store.editor.isLatestSaved)
   //update last save time
   lastTypingDate.value = new Date()
   console.log('lastTypingDate', lastTypingDate.value)
@@ -323,6 +352,9 @@ const handleSave = (text: string, html: string) => {
   };
 });*/
 
+//create a intervalID variable in order to clear the interval onUnmounted
+let autoSaveInterval: number = 0
+
 onMounted(() => {
   console.log('menu mounted')
   //clean up
@@ -343,8 +375,13 @@ onMounted(() => {
 
   //setup auto save interval
   //Interval to check if the last typing date is 3 seconds later than now
-  setInterval(() => {
-    if (isInEditMode.value && isAutoSaveOn.value && !isLatestSaved.value) {
+  autoSaveInterval = setInterval(() => {
+    console.log('Interval: isLatestSaved', store.editor.isLatestSaved)
+    if (isInEditMode.value && isAutoSaveOn.value && !store.editor.isLatestSaved) {
+      //log three conditions
+      console.log('isInEditMode:', isInEditMode.value)
+      console.log('isAutoSaveOn:', isAutoSaveOn.value)
+      console.log('isLatestSaved:', store.editor.isLatestSaved)
       //check if the date is 3 seconds later than last typing date
       const now = new Date()
       const diff = now.getTime() - lastTypingDate.value.getTime()
@@ -363,6 +400,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   console.log('menu unmounted')
+  clearInterval(autoSaveInterval)
   //TODO: ask user if they want to save the changes
   //remove store.editor.textVal
   // store.editor.textVal = ''
@@ -371,8 +409,10 @@ onUnmounted(() => {
 
 const activeKey = ref<string | null>(null);
 const collapsed = ref(false);
-const isLoading = ref(false);
+//loading status of modal
+const isModalActionLoading = ref(false);
 const newGistCollectionName = ref('')
+const newGistFileName = ref('')
 const newGistName = ref('')
 const isNewGistPublic = ref(false)
 const isCurrentGistPublic = ref(false)
@@ -381,13 +421,13 @@ const isInEditMode = ref(false)
 const isAutoSaveOn = ref(true)
 //last update date
 const lastTypingDate = ref(new Date())
-//saving status flag
-const isLatestSaved = ref(true)
 //isFirstEdit flag
 const isFirstEdit = ref(true)
 
 //save the filename before edit, for renaming
 let gistFileNameBeforeEdit = ''
+//save the gist file content before edit, for comparing
+let gistFileContentBeforeEdit = ''
 
 const publicOrPrivateSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
   const style: CSSProperties = {}
@@ -422,7 +462,7 @@ const viewOrEditSwitchStyle = ({focused, checked}: { focused: boolean, checked: 
 }
 
 const onNewGistSubmit = () => {
-  isLoading.value = true
+  isModalActionLoading.value = true
   let body = {
     "description": newGistCollectionName.value,
     "public": isNewGistPublic.value,
@@ -447,13 +487,32 @@ const onNewGistSubmit = () => {
         infoMsg(iT('hint.request_failed'))
       })
       .finally(() => {
-        isLoading.value = false
+        isModalActionLoading.value = false
       })
 }
 
 const handleMenuExpand = (keys: string[]) => {
   console.log('expandedKey:', keys)
 };
+
+const handleViewModeChange = (checked: boolean) => {
+  console.log('view mode change:', checked)
+  //true => Edit mode, false => View mode
+  if (checked) {
+    console.log('enter edit mode')
+    gistFileContentBeforeEdit = store.editor.textVal
+  } else {
+    console.log('enter view mode')
+    //check if the content is changed
+    if (gistFileContentBeforeEdit !== store.editor.textVal) {
+      console.log('content changed')
+      handleSave(store.editor.textVal)
+    }
+  }
+  isFirstEdit.value = true
+  store.editor.isLatestSaved = true
+  console.log('ViewModeChange: isLatestSaved:', store.editor.isLatestSaved)
+}
 
 const handleMenuClick = (key: string, item: MenuOption) => {
   console.log('click, Key:', key, 'Item:', item)
@@ -463,14 +522,7 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     store.app.isNewGistModalShow = true
   } else {
     //TODO: ask user if they want to save the changes
-
-    //clean up
-    isLatestSaved.value = true
-    isInEditMode.value = false
-    store.editor.openingFile = true
-    isFirstEdit.value = true
-
-
+    cleanUpEditor()
     //create a new axios instance to bypass global interceptors
     //because extra headers would cause CORS error
     store.loading.editor = true;
@@ -484,7 +536,7 @@ const handleMenuClick = (key: string, item: MenuOption) => {
         //So I add a timestamp to avoid browser cache
         'time-stamp': new Date().getTime()
       }
-    }).then(function (response) {
+    }).then((response) => {
       store.editor.textVal = response.data
       store.editor.filename = item.label as string
       gistFileNameBeforeEdit = item.label as string
@@ -505,21 +557,64 @@ const handleEditorChange = (text: string, html: string) => {
   if (isAutoSaveOn.value && isInEditMode.value && !isFirstEdit.value) {
     //update last typing date
     lastTypingDate.value = new Date()
-    isLatestSaved.value = false
+    store.editor.isLatestSaved = false
   } else {
     //if it's the first time editing, skip and set isFirstEdit to false
     isFirstEdit.value = false
   }
 }
 
+const handleNewGistFile = () => {
+  isModalActionLoading.value = true
+  axios.patch('/gists/' + currentGistId.value, {
+    files: {
+      [newGistFileName.value]: {
+        content: "# HelloWorld"
+      }
+    }
+  }).then((res) => {
+    console.log("new gist save success:", res)
+    successMsg(iT('gist.create_new_gist_file_success'))
+    //refresh gist menu
+    loadGistsDataToMenu()
+    //set selected key to the new file
+    activeKey.value = res.data.files[newGistFileName.value].raw_url
+    cleanUpEditor()
+    store.editor.textVal = "# HelloWorld"
+    store.editor.filename = newGistFileName.value
+    gistFileNameBeforeEdit = newGistFileName.value
+  }).catch((err) => {
+    console.log(err)
+    errorMsg(iT('gist.create_new_gist_file_failed'))
+  }).finally(() => {
+    store.app.isNewGistFileModalShow = false
+    isModalActionLoading.value = false
+  })
+}
 
+//Editor close handler
 const handleEditorClose = () => {
-  //clean up
+  //editor related
   store.editor.textVal = ''
   store.editor.filename = ''
-  store.editor.openingFile = false
+  //auto-save related
+  store.editor.isLatestSaved = true
   isInEditMode.value = false
+  store.editor.openingFile = false
   activeKey.value = null
+  isFirstEdit.value = true
+}
+
+//Editor clean handler
+const cleanUpEditor = () => {
+  //editor related
+  store.editor.textVal = ''
+  store.editor.filename = ''
+  //auto-save related
+  store.editor.isLatestSaved = true
+  isInEditMode.value = false
+  store.editor.openingFile = true
+  isFirstEdit.value = true
 }
 
 </script>
