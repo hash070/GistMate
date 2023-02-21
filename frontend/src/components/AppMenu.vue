@@ -100,28 +100,29 @@
                   {{ $t('hint.visibility_is_unchangeable') }}
                 </n-tooltip>
               </div>
-
-              <n-switch
-                  :rail-style="viewOrEditSwitchStyle"
-                  v-model:value="isAutoSaveOn"
-              >
-                <template #checked-icon>
-                  <n-icon>
-                    <IconLockOpen/>
-                  </n-icon>
-                </template>
-                <template #unchecked-icon>
-                  <n-icon>
-                    <IconLock/>
-                  </n-icon>
-                </template>
-                <template #checked>
-                  {{ $t('gist.auto_save_on') }}
-                </template>
-                <template #unchecked>
-                  {{ $t('gist.auto_save_off') }}
-                </template>
-              </n-switch>
+              <div style="min-width: 8rem">
+                <n-switch
+                    :rail-style="viewOrEditSwitchStyle"
+                    v-model:value="isAutoSaveOn"
+                >
+                  <template #checked-icon>
+                    <n-icon>
+                      <IconLockOpen/>
+                    </n-icon>
+                  </template>
+                  <template #unchecked-icon>
+                    <n-icon>
+                      <IconLock/>
+                    </n-icon>
+                  </template>
+                  <template #checked>
+                    {{ $t('gist.auto_save_on') }}
+                  </template>
+                  <template #unchecked>
+                    {{ $t('gist.auto_save_off') }}
+                  </template>
+                </n-switch>
+              </div>
 
               <n-button
                   icon-placement="left"
@@ -249,7 +250,8 @@ import {
   NScrollbar,
   NSpace,
   NSpin,
-  NSwitch, NTooltip
+  NSwitch,
+  NTooltip
 } from 'naive-ui'
 import {store} from '../store'
 import {IconFilePlus, IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
@@ -287,10 +289,6 @@ const handleSave = (text: string, html: string) => {
       activeKey.value = res.data.files[store.editor.filename].raw_url
       //update the content
       updateGistData(currentGistId.value, text)
-      //update save flag
-      isLatestSaved = true
-      //update last save time
-      lastTypingDate = new Date()
     }).catch((err) => {
       console.log(err)
       errorMsg(iT('hint.file_name_update_failed'))
@@ -300,6 +298,11 @@ const handleSave = (text: string, html: string) => {
     //if the file name is not changed, just update the content
     updateGistData(currentGistId.value, text)
   }
+  //update save flag
+  isLatestSaved.value = true
+  //update last save time
+  lastTypingDate.value = new Date()
+  console.log('lastTypingDate', lastTypingDate.value)
 }
 
 /*
@@ -341,21 +344,21 @@ onMounted(() => {
   //setup auto save interval
   //Interval to check if the last typing date is 3 seconds later than now
   setInterval(() => {
-    if (isInEditMode.value && isAutoSaveOn.value && !isLatestSaved) {
+    if (isInEditMode.value && isAutoSaveOn.value && !isLatestSaved.value) {
       //check if the date is 3 seconds later than last typing date
       const now = new Date()
-      const diff = now.getTime() - lastTypingDate.getTime()
+      const diff = now.getTime() - lastTypingDate.value.getTime()
       if (diff > 3000) {
         console.log('==========Auto save===========')
         console.log('diff:', diff)
-        console.log('last typing date:', lastTypingDate)
+        console.log('last typing date:', lastTypingDate.value)
         console.log('now:', now)
         console.log('==============================')
         //save method
         handleSave(store.editor.textVal, '')
       }
     }
-  }, 300)
+  }, 1000)
 })
 
 onUnmounted(() => {
@@ -376,13 +379,15 @@ const isCurrentGistPublic = ref(false)
 const currentGistId = ref('')
 const isInEditMode = ref(false)
 const isAutoSaveOn = ref(true)
+//last update date
+const lastTypingDate = ref(new Date())
+//saving status flag
+const isLatestSaved = ref(true)
+//isFirstEdit flag
+const isFirstEdit = ref(true)
 
 //save the filename before edit, for renaming
 let gistFileNameBeforeEdit = ''
-//saving status flag
-let isLatestSaved = false
-//last update date
-let lastTypingDate = new Date()
 
 const publicOrPrivateSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
   const style: CSSProperties = {}
@@ -459,6 +464,13 @@ const handleMenuClick = (key: string, item: MenuOption) => {
   } else {
     //TODO: ask user if they want to save the changes
 
+    //clean up
+    isLatestSaved.value = true
+    isInEditMode.value = false
+    store.editor.openingFile = true
+    isFirstEdit.value = true
+
+
     //create a new axios instance to bypass global interceptors
     //because extra headers would cause CORS error
     store.loading.editor = true;
@@ -489,11 +501,14 @@ const handleMenuClick = (key: string, item: MenuOption) => {
 };
 
 const handleEditorChange = (text: string, html: string) => {
-  //if auto save is on, update the last typing date
-  if (isAutoSaveOn.value) {
+  //If auto-saving is on and it's in edit mode but it's not the first time editing, update the last typing date.
+  if (isAutoSaveOn.value && isInEditMode.value && !isFirstEdit.value) {
     //update last typing date
-    lastTypingDate = new Date()
-    isLatestSaved = false
+    lastTypingDate.value = new Date()
+    isLatestSaved.value = false
+  } else {
+    //if it's the first time editing, skip and set isFirstEdit to false
+    isFirstEdit.value = false
   }
 }
 
