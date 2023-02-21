@@ -9,7 +9,7 @@ import en_US from "./locale/en-US.json";
 import ja_JP from "./locale/ja-JP.json";
 import zh_CN from "./locale/zh-CN.json";
 // @ts-ignore
-import VMdEditor from "./utils/mdEditor";
+import {VMdEditor, VMdPreview} from "./utils/mdEditor";
 
 export const i18n = createI18n({
     legacy: false,
@@ -26,4 +26,5 @@ createApp(App)
     .use(i18n)
     .use(router)
     .use(VMdEditor)
+    .use(VMdPreview)
     .mount('#app')

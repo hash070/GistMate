@@ -41,19 +41,110 @@
               <IconLoader/>
             </n-icon>
           </template>
+
+          <n-scrollbar
+              x-scrollable
+              v-if="store.editor.openingFile"
+          >
+            <div class="gist-edit-tool-bar" style="display: flex;overflow-x: auto;align-items: center;height: 3rem">
+              <div style="min-width: 5rem">
+                <n-switch
+                    :rail-style="viewOrEditSwitchStyle"
+                    v-model:value="isInEditMode"
+                    style="padding-left: 1rem"
+                >
+                  <template #checked>
+                    {{ $t('gist.edit') }}
+                  </template>
+                  <template #unchecked>
+                    {{ $t('gist.view') }}
+                  </template>
+                </n-switch>
+              </div>
+
+              <div>
+                <n-input
+                    v-model:value="store.editor.filename"
+                    style="min-width: 8rem"
+                    :placeholder="$t('gist.file_name')"
+                />
+              </div>
+
+              <div style="min-width: 5rem">
+                <n-switch
+                    :rail-style="publicOrPrivateSwitchStyle"
+                    v-model:value="isCurrentGistPublic"
+                >
+                  <template #checked-icon>
+                    <n-icon :component="IconLockOpen" />
+                  </template>
+                  <template #unchecked-icon>
+                    <n-icon :component="IconLock" />
+                  </template>
+                  <template #checked>
+                    {{ $t('gist.public') }}
+                  </template>
+                  <template #unchecked>
+                    {{ $t('gist.private') }}
+                  </template>
+                </n-switch>
+              </div>
+
+              <n-button
+                  icon-placement="left"
+                  secondary strong
+              >
+                <template #icon>
+                  <n-icon>
+                    <IconFilePlus/>
+                  </n-icon>
+                </template>
+                {{ $t('gist.create_new_gist_file') }}
+              </n-button>
+              <n-button
+                  icon-placement="left"
+                  strong secondary
+                  type="error"
+              >
+                <template #icon>
+                  <n-icon>
+                    <IconTrashX/>
+                  </n-icon>
+                </template>
+                {{ $t('gist.delete_gist_file') }}
+              </n-button>
+              <n-button
+                  quaternary circle
+                  @click="handleEditorClose"
+              >
+                <template #icon>
+                  <n-icon>
+                    <IconX/>
+                  </n-icon>
+                </template>
+              </n-button>
+            </div>
+          </n-scrollbar>
+
+          <v-md-preview
+              v-if="!isInEditMode"
+              :text="store.editor.textVal"
+              height="calc(100vh - 6rem)"
+          />
           <v-md-editor
+              v-else
               v-model="store.editor.textVal"
-              height="calc(100vh - 3rem)"
+              height="calc(100vh - 6rem)"
               :include-level="[1 ,2, 3]"
               @save="handleSave"
-          ></v-md-editor>
+          />
         </n-spin>
       </n-layout>
       <n-modal
           v-model:show="store.app.isNewGistModalShow"
-          :closable="false"
+          :closable="true"
           :bordered="false"
-          :mask-closable="false"
+          :mask-closable="true"
           :loading="isLoading"
           style="max-width: 400px"
           preset="card"
@@ -71,14 +162,20 @@
         />
         <div id="submit-box">
           <n-switch
-              :rail-style="railStyle"
-              v-model:value="isPublic"
+              :rail-style="publicOrPrivateSwitchStyle"
+              v-model:value="isNewGistPublic"
           >
+            <template #checked-icon>
+              <n-icon :component="IconLockOpen" />
+            </template>
+            <template #unchecked-icon>
+              <n-icon :component="IconLock" />
+            </template>
             <template #checked>
-              {{ $t('hint.public') }}
+              {{ $t('gist.public') }}
             </template>
             <template #unchecked>
-              {{ $t('hint.private') }}
+              {{ $t('gist.private') }}
             </template>
           </n-switch>
           <n-button
@@ -105,12 +202,13 @@ import {
   NLayoutSider,
   NMenu,
   NModal,
+  NScrollbar,
   NSpace,
   NSpin,
   NSwitch
 } from 'naive-ui'
 import {store} from '../store'
-import {IconLoader} from '@tabler/icons-vue';
+import {IconFilePlus, IconLoader, IconTrashX, IconX, IconLockOpen, IconLock} from '@tabler/icons-vue';
 import axios from "axios";
 import {
   finishLoadingBar,
@@ -170,11 +268,29 @@ const collapsed = ref(false);
 const isLoading = ref(false);
 const newGistCollectionName = ref('')
 const newGistName = ref('')
-const isPublic = ref(false)
-const railStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
+const isNewGistPublic = ref(false)
+const isCurrentGistPublic = ref(false)
+const isInEditMode = ref(false)
+const publicOrPrivateSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
   const style: CSSProperties = {}
   if (checked) {
-    style.background = '#d03050'
+    style.background = '#FCB040'
+    if (focused) {
+      style.boxShadow = '0 0 0 2px #d0305040'
+    }
+  } else {
+    style.background = '#18A058'
+    if (focused) {
+      style.boxShadow = '0 0 0 2px #2080f040'
+    }
+  }
+  return style
+}
+
+const viewOrEditSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
+  const style: CSSProperties = {}
+  if (checked) {
+    style.background = '#18A058'
     if (focused) {
       style.boxShadow = '0 0 0 2px #d0305040'
     }
@@ -191,7 +307,7 @@ const onNewGistSubmit = () => {
   isLoading.value = true
   let body = {
     "description": newGistCollectionName.value,
-    "public": isPublic.value,
+    "public": isNewGistPublic.value,
     "files": {
       [newGistName.value]: {
         "content": "# Hello World"
@@ -206,7 +322,7 @@ const onNewGistSubmit = () => {
         //clean up
         newGistCollectionName.value = ''
         newGistName.value = ''
-        isPublic.value = false
+        isNewGistPublic.value = false
       })
       .catch((err) => {
         console.log(err);
@@ -217,13 +333,12 @@ const onNewGistSubmit = () => {
       })
 }
 
-
 const handleMenuExpand = (keys: string[]) => {
   console.log('expandedKey:', keys)
 };
 
 const handleMenuClick = (key: string, item: MenuOption) => {
-  console.log('click:', key, item)
+  console.log('click, Key:', key, 'Item:', item)
   if (key === "create") {
     //TODO: create new gist
     console.log('create new gist')
@@ -234,6 +349,7 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     //create a new axios instance to bypass global interceptors
     //because extra headers would cause CORS error
     store.loading.editor = true;
+    store.editor.openingFile = true;
     startLoadingBar()
     getNoInterceptorAxios().request({
       method: 'get',
@@ -245,6 +361,9 @@ const handleMenuClick = (key: string, item: MenuOption) => {
       }
     }).then(function (response) {
       store.editor.textVal = response.data
+      store.editor.filename = item.label as string
+      isCurrentGistPublic.value = item.isPublic as boolean
+      console.log('isCurrentGistPublic:', isCurrentGistPublic.value)
     }).catch(function (error) {
       console.log(error);
     }).finally(() => {
@@ -253,6 +372,15 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     })
   }
 };
+
+const handleEditorClose = () => {
+  //clean up
+  store.editor.textVal = ''
+  store.editor.filename = ''
+  store.editor.openingFile = false
+  isInEditMode.value = false
+  activeKey.value = null
+}
 
 </script>
 <style lang="scss" scoped>
@@ -267,5 +395,9 @@ const handleMenuClick = (key: string, item: MenuOption) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.gist-edit-tool-bar > * {
+  margin-right: 1rem;
 }
 </style>

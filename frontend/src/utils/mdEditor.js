@@ -73,9 +73,18 @@ import enUS from '@kangc/v-md-editor/lib/lang/en-US';
 // zhCN
 import zhCN from '@kangc/v-md-editor/lib/lang/zh-CN';
 
+// import preview component
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+import '@kangc/v-md-editor/lib/style/preview.css';
+
 VMdEditor.use(githubTheme, {
     Hljs: hljs
 });
+
+VMdPreview.use(githubTheme, {
+    Hljs: hljs
+});
+
 //Load mermaid plugin
 VMdEditor.use(createMermaidPlugin());
 //Load emoji plugin
@@ -93,6 +102,16 @@ VMdEditor.use(createCopyCodePlugin());
 //Load align plugin
 VMdEditor.use(createAlignPlugin());
 
+//Load all plugins into VMdPreview
+VMdPreview.use(createMermaidPlugin());
+VMdPreview.use(createEmojiPlugin());
+VMdPreview.use(createKatexPlugin());
+VMdPreview.use(createTipPlugin());
+VMdPreview.use(createTodoListPlugin());
+VMdPreview.use(createHighlightLinesPlugin());
+VMdPreview.use(createCopyCodePlugin());
+VMdPreview.use(createAlignPlugin());
+
 //Load codemirror plugin
 VMdEditor.Codemirror = Codemirror;
 
@@ -100,10 +119,10 @@ VMdEditor.Codemirror = Codemirror;
 export const changeMDELanguage = (lang) => {
     if (lang === 'en-US') {
         VMdEditor.lang.use('en-US', enUS);
-    } else if (lang === 'zh-CN'){
+    } else if (lang === 'zh-CN') {
         VMdEditor.lang.use('zh-CN', zhCN);
     }
 }
 
-export default VMdEditor;
+export {VMdEditor, VMdPreview};
 

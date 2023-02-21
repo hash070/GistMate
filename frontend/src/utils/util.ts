@@ -81,7 +81,7 @@ export const loadGistsDataToMenu = () => {
 export const setMenuOptionsFromAxiosResponse = (res: any) => {
     //init new gist menu label
     let tempMenuOptions: any = [{
-        label: iT('gist.create'),
+        label: iT('gist.create_new_gist_collection'),
         key: 'create',
         icon: renderIcon(IconFilePlus),
     }]
@@ -104,6 +104,9 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                         label: gist.files[child].filename,
                         key: gist.files[child].raw_url,
                         icon: renderIcon(BookIcon),
+                        parentKey: gist.id,
+                        isPublic: gist.public,
+                        updatedAt: gist.updated_at,
                         // to: '/gist/'+gist.id+'/'+child.filename
                     }
                 })

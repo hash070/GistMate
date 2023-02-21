@@ -9,8 +9,6 @@
     "api_key": "GitHub gist API Key",
     "input_new_gist_collection": "Please input new gist collection title",
     "input_new_gist_name": "Please input new gist name",
-    "public": "Public",
-    "private": "Private",
     "request_failed": "Request failed"
   },
   "login": {
@@ -21,6 +19,17 @@
   },
   "gist": {
     "untitled": "Untitled",
-    "create": "Create"
+    "view": "View",
+    "edit": "Edit",
+    "public": "Public",
+    "private": "Private",
+    "create": "Create",
+    "file_name": "File name",
+    "create_new_gist_file": "Create new gist file",
+    "create_new_gist_collection": "New gist collection",
+    "delete_gist_file": "Delete this gist file",
+    "delete_gist_collection": "Delete this gist collection",
+    "confirm_delete_gist_file": "Are you sure to delete this gist file?",
+    "confirm_delete_gist_collection": "Are you sure to delete this gist collection?"
   }
 }

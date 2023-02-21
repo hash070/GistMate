@@ -18,12 +18,14 @@ export const store = reactive({
         isKeyInputModalShow: false,
         isNewGistModalShow: false,
     },
-    gistsData: null as object | null,
+    gistsData: [] as Array<object>,
     loading: {
         menu: false,
         editor: false
     },
     editor: {
         textVal: "",
+        filename: "",
+        openingFile: false,//is currently opening file
     }
 })
