@@ -23,7 +23,7 @@ function onKeySubmit() {
   axios.get('/gists' + '?time_stamp=' + new Date().getTime())
       .then((res) => {
         successMsg(iT('login.success'))
-        store.app.isModalShow = false
+        store.app.isKeyInputModalShow = false
         console.log(res)
         // process data (array) and push into store.menuOptions
         setMenuOptionsFromAxiosResponse(res)
@@ -51,7 +51,7 @@ onMounted(() => {
     <AppHeader/>
     <router-view class="router-view"></router-view>
     <n-modal
-        v-model:show="store.app.isModalShow"
+        v-model:show="store.app.isKeyInputModalShow"
         :closable="false"
         :bordered="false"
         :mask-closable="false"

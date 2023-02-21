@@ -6,7 +6,12 @@
     "network_success": "Network success",
     "network_error": "Network error",
     "input_key": "Please input your GitHub gist api key",
-    "api_key": "GitHub gist API Key"
+    "api_key": "GitHub gist API Key",
+    "input_new_gist_collection": "Please input new gist collection title",
+    "input_new_gist_name": "Please input new gist name",
+    "public": "Public",
+    "private": "Private",
+    "request_failed": "Request failed"
   },
   "login": {
     "submit": "Submit",
