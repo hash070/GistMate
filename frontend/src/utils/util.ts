@@ -120,3 +120,20 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
 export const getNoInterceptorAxios = () => {
     return noInterceptorAxios
 }
+
+//update gist data
+export const updateGistData = (gistId: string, content: any) => {
+    axios.patch('/gists/' + gistId, {
+        files: {
+            [store.editor.filename]: {
+                content: content
+            }
+        }
+    }).then((res) => {
+        console.log(res)
+        successMsg(iT('hint.save_success'))
+    }).catch((err) => {
+        console.log(err)
+        errorMsg(iT('hint.save_failed'))
+    })
+}

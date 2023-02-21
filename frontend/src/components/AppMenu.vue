@@ -66,6 +66,7 @@
                 <n-input
                     v-model:value="store.editor.filename"
                     style="min-width: 8rem"
+                    :disabled="!isInEditMode"
                     :placeholder="$t('gist.file_name')"
                 />
               </div>
@@ -76,10 +77,14 @@
                     v-model:value="isCurrentGistPublic"
                 >
                   <template #checked-icon>
-                    <n-icon :component="IconLockOpen" />
+                    <n-icon>
+                      <IconLockOpen/>
+                    </n-icon>
                   </template>
                   <template #unchecked-icon>
-                    <n-icon :component="IconLock" />
+                    <n-icon>
+                      <IconLock/>
+                    </n-icon>
                   </template>
                   <template #checked>
                     {{ $t('gist.public') }}
@@ -166,10 +171,14 @@
               v-model:value="isNewGistPublic"
           >
             <template #checked-icon>
-              <n-icon :component="IconLockOpen" />
+              <n-icon>
+                <IconLockOpen/>
+              </n-icon>
             </template>
             <template #unchecked-icon>
-              <n-icon :component="IconLock" />
+              <n-icon>
+                <IconLock/>
+              </n-icon>
             </template>
             <template #checked>
               {{ $t('gist.public') }}
@@ -208,19 +217,50 @@ import {
   NSwitch
 } from 'naive-ui'
 import {store} from '../store'
-import {IconFilePlus, IconLoader, IconTrashX, IconX, IconLockOpen, IconLock} from '@tabler/icons-vue';
+import {IconFilePlus, IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
 import axios from "axios";
 import {
+  errorMsg,
   finishLoadingBar,
   getNoInterceptorAxios,
   infoMsg,
   iT,
   loadGistsDataToMenu,
-  startLoadingBar
+  startLoadingBar,
+  successMsg,
+  updateGistData
 } from "../utils/util";
 
 const handleSave = (text: string, html: string) => {
   console.log('Save action:', text)
+
+  //if the file name is changed, update the file name before update the content
+  if (store.editor.filename !== gistFileNameBeforeEdit) {
+    axios.patch('/gists/' + currentGistId.value, {
+      files: {
+        [gistFileNameBeforeEdit]: {
+          filename: store.editor.filename
+        }
+      }
+    }).then((res) => {
+      console.log(res)
+      gistFileNameBeforeEdit = store.editor.filename
+      successMsg(iT('hint.file_name_update_success'))
+      //update the menu
+      loadGistsDataToMenu();
+      //restore the selected menu key
+      activeKey.value = res.data.files[store.editor.filename].raw_url
+      //update the content
+      updateGistData(currentGistId.value, text)
+    }).catch((err) => {
+      console.log(err)
+      errorMsg(iT('hint.file_name_update_failed'))
+      return
+    })
+  } else {
+    //if the file name is not changed, just update the content
+    updateGistData(currentGistId.value, text)
+  }
 }
 
 /*
@@ -270,7 +310,12 @@ const newGistCollectionName = ref('')
 const newGistName = ref('')
 const isNewGistPublic = ref(false)
 const isCurrentGistPublic = ref(false)
+const currentGistId = ref('')
 const isInEditMode = ref(false)
+
+//save the filename before edit, for renaming
+let gistFileNameBeforeEdit = ''
+
 const publicOrPrivateSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
   const style: CSSProperties = {}
   if (checked) {
@@ -362,7 +407,9 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     }).then(function (response) {
       store.editor.textVal = response.data
       store.editor.filename = item.label as string
+      gistFileNameBeforeEdit = item.label as string
       isCurrentGistPublic.value = item.isPublic as boolean
+      currentGistId.value = item.parentKey as string
       console.log('isCurrentGistPublic:', isCurrentGistPublic.value)
     }).catch(function (error) {
       console.log(error);
