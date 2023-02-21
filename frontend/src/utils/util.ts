@@ -3,6 +3,11 @@ import {store} from "../store"
 import {i18n} from "../main";
 import {Component, h} from "vue";
 import {BookOutline as BookIcon, LibraryOutline as LibraryIcon} from "@vicons/ionicons5";
+import {IconFilePlus} from '@tabler/icons-vue';
+import axios from "axios";
+
+//no interceptor axios
+const noInterceptorAxios = axios.create()
 
 const {message, notification, dialog, loadingBar} = createDiscreteApi(
     ['message', 'dialog', 'notification', 'loadingBar'],
@@ -47,9 +52,39 @@ export const renderIcon = (icon: Component) => {
     return () => h(NIcon, null, {default: () => h(icon)})
 }
 
+//load all gists data to menu
+export const loadGistsDataToMenu = () => {
+    //activate menu loading spin
+    store.loading.menu = true
+    //get gist data, add time_stamp to avoid cache
+    axios.get('/gists' + '?time_stamp=' + new Date().getTime())
+        .then((res) => {
+            successMsg(iT('login.success'))
+            console.log(res)
+            //store all gist data into store.gistsData
+            store.gistsData = res.data
+            // process data (array) and push into store.menuOptions
+            setMenuOptionsFromAxiosResponse(res)
+        })
+        .catch((err) => {
+            console.log(err)
+            errorMsg(iT('login.failed'))
+            localStorage.removeItem('gistKey')
+        })
+        .finally(() => {
+            //deactivate menu loading spin
+            store.loading.menu = false
+        })
+}
+
 //set store.menuOptions from axios response
 export const setMenuOptionsFromAxiosResponse = (res: any) => {
-    let tempMenuOptions: any = []
+    //init new gist menu label
+    let tempMenuOptions: any = [{
+        label: iT('gist.create'),
+        key: 'create',
+        icon: renderIcon(IconFilePlus),
+    }]
     res.data.map((gist: any) => {
         //if the description is "", set it to 'Untitled'
         if (gist.description === "") {
@@ -76,4 +111,9 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
         ]
     })
     store.menuOptions = tempMenuOptions
+}
+
+//get new axios instance to bypass global interceptors
+export const getNoInterceptorAxios = () => {
+    return noInterceptorAxios
 }

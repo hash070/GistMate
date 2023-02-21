@@ -15,6 +15,7 @@
     "failed": "Gist fetch failed, please check your api key"
   },
   "gist": {
-    "untitled": "Untitled"
+    "untitled": "Untitled",
+    "create": "Create"
   }
 }

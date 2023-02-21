@@ -49,6 +49,7 @@ import {onMounted, ref} from "vue";
 import {NAvatar, NDropdown} from "naive-ui";
 import {useI18n} from "vue-i18n";
 import {successMsg} from "../utils/util";
+import {changeMDELanguage} from "../utils/mdEditor";
 
 const languageOptions = [
   {
@@ -60,7 +61,7 @@ const languageOptions = [
     key: 'ja-JP'
   },
   {
-    label: '简体中文',
+    label: '中文简体',
     key: 'zh-CN'
   }
 ]
@@ -72,6 +73,7 @@ const showDropdown = ref(false)
 function handleSelect(key: string | number) {
   successMsg(String(key))
   locale.value = String(key)
+  changeMDELanguage(String(key))
 }
 
 function handleClick() {

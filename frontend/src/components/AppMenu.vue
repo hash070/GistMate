@@ -16,7 +16,7 @@
         <n-spin :show="store.loading.menu">
           <template #icon style="display: flex;align-items: center">
             <n-icon>
-              <IconRefresh/>
+              <IconLoader/>
             </n-icon>
           </template>
           <n-menu
@@ -35,23 +35,31 @@
           id="content"
           :native-scrollbar="false"
       >
-        <v-md-editor
-            v-model="store.editor.textVal"
-            height="calc(100vh - 3rem)"
-            :include-level="[1 ,2, 3]"
-            @save="handleSave"
-        ></v-md-editor>
+        <n-spin :show="store.loading.editor">
+          <template #icon style="display: flex;align-items: center">
+            <n-icon>
+              <IconLoader/>
+            </n-icon>
+          </template>
+          <v-md-editor
+              v-model="store.editor.textVal"
+              height="calc(100vh - 3rem)"
+              :include-level="[1 ,2, 3]"
+              @save="handleSave"
+          ></v-md-editor>
+        </n-spin>
       </n-layout>
     </n-layout>
   </n-space>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {onMounted, onUnmounted, ref} from 'vue'
 import {MenuOption, NIcon, NLayout, NLayoutSider, NMenu, NSpace, NSpin} from 'naive-ui'
 import {store} from '../store'
-import {IconRefresh} from '@tabler/icons-vue';
+import {IconLoader} from '@tabler/icons-vue';
 import axios from "axios";
+import {finishLoadingBar, getNoInterceptorAxios, infoMsg, iT, loadGistsDataToMenu, startLoadingBar} from "../utils/util";
 
 const handleSave = (text: string, html: string) => {
   console.log('Save action:', text)
@@ -77,6 +85,23 @@ const handleSave = (text: string, html: string) => {
 
 onMounted(() => {
   console.log('menu mounted')
+  const gistKey = localStorage.getItem('gistKey')
+  if (gistKey) {
+    console.log('gist key detected, trying to login')
+    loadGistsDataToMenu();
+  } else {
+    console.log('gistKey is null, please input your gist key')
+    infoMsg(iT('hint.input_key'))
+    // infoMsg(iT('hint.input_key'))
+    store.app.isModalShow = true
+  }
+})
+
+onUnmounted(() => {
+  console.log('menu unmounted')
+  //TODO: ask user if they want to save the changes
+  //remove store.editor.textVal
+  // store.editor.textVal = ''
 })
 
 
@@ -89,16 +114,33 @@ const handleMenuExpand = (keys: string[]) => {
 
 const handleMenuClick = (key: string, item: MenuOption) => {
   console.log('click:', key, item)
-  //create a new axios instance to bypass global interceptors
-  //because extra headers would cause CORS error
-  axios.create().request({
-    method: 'get',
-    url: key,
-  }).then(function (response) {
-    store.editor.textVal = response.data
-  }).catch(function (error) {
-    console.log(error);
-  });
+  if (key === "create") {
+    //TODO: create new gist
+    console.log('create new gist')
+  } else {
+    //TODO: ask user if they want to save the changes
+
+    //create a new axios instance to bypass global interceptors
+    //because extra headers would cause CORS error
+    store.loading.editor = true;
+    startLoadingBar()
+    getNoInterceptorAxios().request({
+      method: 'get',
+      url: key,
+      params: {
+        //Extra req headers to GitHub api would cause CORS error
+        //So I add a timestamp to avoid browser cache
+        'time-stamp': new Date().getTime()
+      }
+    }).then(function (response) {
+      store.editor.textVal = response.data
+    }).catch(function (error) {
+      console.log(error);
+    }).finally(() => {
+      finishLoadingBar()
+      store.loading.editor = false
+    })
+  }
 };
 
 </script>

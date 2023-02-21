@@ -3,15 +3,13 @@ import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
 import {NButton, NConfigProvider, NInput, NModal} from 'naive-ui'
-import {errorMsg, infoMsg, iT, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
+import {errorMsg, infoMsg, iT, loadGistsDataToMenu, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
-
 
 //dark mode or light mode
 const theme = ref<GlobalTheme | null>(null)
 
-const isModalShow = ref(false)
 const isLoading = ref(false)
 const gistKey = ref('')
 
@@ -21,10 +19,11 @@ function onKeySubmit() {
   //activate menu loading spin
   store.loading.menu = true
   console.log('confirm')
-  axios.get('/gists')
+  //get gist data, add time_stamp to avoid cache
+  axios.get('/gists' + '?time_stamp=' + new Date().getTime())
       .then((res) => {
         successMsg(iT('login.success'))
-        isModalShow.value = false
+        store.app.isModalShow = false
         console.log(res)
         // process data (array) and push into store.menuOptions
         setMenuOptionsFromAxiosResponse(res)
@@ -41,35 +40,7 @@ function onKeySubmit() {
 }
 
 onMounted(() => {
-  const gistKey = localStorage.getItem('gistKey')
-  if (gistKey) {
-    console.log('gist key detected, trying to login')
-    //activate menu loading spin
-    store.loading.menu = true
-    axios.get('/gists')
-        .then((res) => {
-          successMsg(iT('login.success'))
-          console.log(res)
-          //store all gist data into store.gistsData
-          store.gistsData = res.data
-          // process data (array) and push into store.menuOptions
-          setMenuOptionsFromAxiosResponse(res)
-        })
-        .catch((err) => {
-          console.log(err)
-          errorMsg(iT('login.failed'))
-          localStorage.removeItem('gistKey')
-        })
-        .finally(() => {
-          //deactivate menu loading spin
-          store.loading.menu = false
-        })
-  } else {
-    console.log('gistKey is null, please input your gist key')
-    infoMsg(iT('hint.input_key'))
-    // infoMsg(iT('hint.input_key'))
-    isModalShow.value = true
-  }
+  console.log('app mounted')
 })
 
 
@@ -80,7 +51,7 @@ onMounted(() => {
     <AppHeader/>
     <router-view class="router-view"></router-view>
     <n-modal
-        v-model:show="isModalShow"
+        v-model:show="store.app.isModalShow"
         :closable="false"
         :bordered="false"
         :mask-closable="false"

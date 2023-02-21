@@ -67,6 +67,12 @@ import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 // import align plugin
 import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
 
+// import languages
+// enUS
+import enUS from '@kangc/v-md-editor/lib/lang/en-US';
+// zhCN
+import zhCN from '@kangc/v-md-editor/lib/lang/zh-CN';
+
 VMdEditor.use(githubTheme, {
     Hljs: hljs
 });
@@ -90,6 +96,14 @@ VMdEditor.use(createAlignPlugin());
 //Load codemirror plugin
 VMdEditor.Codemirror = Codemirror;
 
+//change language function
+export const changeMDELanguage = (lang) => {
+    if (lang === 'en-US') {
+        VMdEditor.lang.use('en-US', enUS);
+    } else if (lang === 'zh-CN'){
+        VMdEditor.lang.use('zh-CN', zhCN);
+    }
+}
 
 export default VMdEditor;
 

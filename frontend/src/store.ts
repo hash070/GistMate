@@ -14,9 +14,13 @@ export const store = reactive({
         },
     } as MaybeRef<any> | undefined,
     menuOptions: [] as MenuOption[],
+    app: {
+        isModalShow: false,
+    },
     gistsData: null as object | null,
     loading: {
-        menu: false
+        menu: false,
+        editor: false
     },
     editor: {
         textVal: "",
