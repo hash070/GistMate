@@ -137,3 +137,27 @@ export const updateGistData = (gistId: string, content: any) => {
         errorMsg(iT('hint.save_failed'))
     })
 }
+
+//定时器单例模式
+// class UniqueTimer {
+//     static timer = null;
+//     static time = 0;
+//
+//     static getTimer(callback, time) {
+//         if (this.timer === null || this.time !== time) {
+//             clearInterval(this.timer);
+//             this.timer = setInterval(() => {
+//                 callback();
+//             }, time);
+//         }
+//         return this.timer;
+//     }
+//
+//     static clearTimer() {
+//         if (this.timer) {
+//             clearInterval(this.timer);
+//             this.timer = null;
+//         }
+//     }
+// }
+

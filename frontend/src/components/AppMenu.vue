@@ -72,28 +72,56 @@
               </div>
 
               <div style="min-width: 5rem">
-                <n-switch
-                    :rail-style="publicOrPrivateSwitchStyle"
-                    v-model:value="isCurrentGistPublic"
-                >
-                  <template #checked-icon>
-                    <n-icon>
-                      <IconLockOpen/>
-                    </n-icon>
+                <n-tooltip placement="bottom" trigger="hover">
+                  <template #trigger>
+                    <n-switch
+                        :rail-style="publicOrPrivateSwitchStyle"
+                        v-model:value="isCurrentGistPublic"
+                        disabled
+                    >
+                      <template #checked-icon>
+                        <n-icon>
+                          <IconLockOpen/>
+                        </n-icon>
+                      </template>
+                      <template #unchecked-icon>
+                        <n-icon>
+                          <IconLock/>
+                        </n-icon>
+                      </template>
+                      <template #checked>
+                        {{ $t('gist.public') }}
+                      </template>
+                      <template #unchecked>
+                        {{ $t('gist.private') }}
+                      </template>
+                    </n-switch>
                   </template>
-                  <template #unchecked-icon>
-                    <n-icon>
-                      <IconLock/>
-                    </n-icon>
-                  </template>
-                  <template #checked>
-                    {{ $t('gist.public') }}
-                  </template>
-                  <template #unchecked>
-                    {{ $t('gist.private') }}
-                  </template>
-                </n-switch>
+                  {{ $t('hint.visibility_is_unchangeable') }}
+                </n-tooltip>
               </div>
+
+              <n-switch
+                  :rail-style="viewOrEditSwitchStyle"
+                  v-model:value="isAutoSaveOn"
+              >
+                <template #checked-icon>
+                  <n-icon>
+                    <IconLockOpen/>
+                  </n-icon>
+                </template>
+                <template #unchecked-icon>
+                  <n-icon>
+                    <IconLock/>
+                  </n-icon>
+                </template>
+                <template #checked>
+                  {{ $t('gist.auto_save_on') }}
+                </template>
+                <template #unchecked>
+                  {{ $t('gist.auto_save_off') }}
+                </template>
+              </n-switch>
 
               <n-button
                   icon-placement="left"
@@ -142,6 +170,7 @@
               height="calc(100vh - 6rem)"
               :include-level="[1 ,2, 3]"
               @save="handleSave"
+              @change="handleEditorChange"
           />
         </n-spin>
       </n-layout>
@@ -166,27 +195,33 @@
             style="margin-top: 20px"
         />
         <div id="submit-box">
-          <n-switch
-              :rail-style="publicOrPrivateSwitchStyle"
-              v-model:value="isNewGistPublic"
-          >
-            <template #checked-icon>
-              <n-icon>
-                <IconLockOpen/>
-              </n-icon>
+          <n-tooltip placement="bottom" trigger="hover">
+            <template #trigger>
+              <n-switch
+                  :rail-style="publicOrPrivateSwitchStyle"
+                  v-model:value="isNewGistPublic"
+              >
+                <template #checked-icon>
+                  <n-icon>
+                    <IconLockOpen/>
+                  </n-icon>
+                </template>
+                <template #unchecked-icon>
+                  <n-icon>
+                    <IconLock/>
+                  </n-icon>
+                </template>
+                <template #checked>
+                  {{ $t('gist.public') }}
+                </template>
+                <template #unchecked>
+                  {{ $t('gist.private') }}
+                </template>
+              </n-switch>
             </template>
-            <template #unchecked-icon>
-              <n-icon>
-                <IconLock/>
-              </n-icon>
-            </template>
-            <template #checked>
-              {{ $t('gist.public') }}
-            </template>
-            <template #unchecked>
-              {{ $t('gist.private') }}
-            </template>
-          </n-switch>
+            {{ $t('hint.visibility_is_unchangeable') }}
+          </n-tooltip>
+
           <n-button
               :loading="isLoading"
               :disabled="newGistCollectionName === ''|| newGistName === ''"
@@ -214,7 +249,7 @@ import {
   NScrollbar,
   NSpace,
   NSpin,
-  NSwitch
+  NSwitch, NTooltip
 } from 'naive-ui'
 import {store} from '../store'
 import {IconFilePlus, IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
@@ -252,6 +287,10 @@ const handleSave = (text: string, html: string) => {
       activeKey.value = res.data.files[store.editor.filename].raw_url
       //update the content
       updateGistData(currentGistId.value, text)
+      //update save flag
+      isLatestSaved = true
+      //update last save time
+      lastTypingDate = new Date()
     }).catch((err) => {
       console.log(err)
       errorMsg(iT('hint.file_name_update_failed'))
@@ -283,6 +322,11 @@ const handleSave = (text: string, html: string) => {
 
 onMounted(() => {
   console.log('menu mounted')
+  //clean up
+  store.editor.textVal = ''
+  store.editor.filename = ''
+  isInEditMode.value = false
+  store.editor.openingFile = false
   const gistKey = localStorage.getItem('gistKey')
   if (gistKey) {
     console.log('gist key detected, trying to login')
@@ -293,6 +337,25 @@ onMounted(() => {
     // infoMsg(iT('hint.input_key'))
     store.app.isKeyInputModalShow = true
   }
+
+  //setup auto save interval
+  //Interval to check if the last typing date is 3 seconds later than now
+  setInterval(() => {
+    if (isInEditMode.value && isAutoSaveOn.value && !isLatestSaved) {
+      //check if the date is 3 seconds later than last typing date
+      const now = new Date()
+      const diff = now.getTime() - lastTypingDate.getTime()
+      if (diff > 3000) {
+        console.log('==========Auto save===========')
+        console.log('diff:', diff)
+        console.log('last typing date:', lastTypingDate)
+        console.log('now:', now)
+        console.log('==============================')
+        //save method
+        handleSave(store.editor.textVal, '')
+      }
+    }
+  }, 300)
 })
 
 onUnmounted(() => {
@@ -312,9 +375,14 @@ const isNewGistPublic = ref(false)
 const isCurrentGistPublic = ref(false)
 const currentGistId = ref('')
 const isInEditMode = ref(false)
+const isAutoSaveOn = ref(true)
 
 //save the filename before edit, for renaming
 let gistFileNameBeforeEdit = ''
+//saving status flag
+let isLatestSaved = false
+//last update date
+let lastTypingDate = new Date()
 
 const publicOrPrivateSwitchStyle = ({focused, checked}: { focused: boolean, checked: boolean }) => {
   const style: CSSProperties = {}
@@ -419,6 +487,16 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     })
   }
 };
+
+const handleEditorChange = (text: string, html: string) => {
+  //if auto save is on, update the last typing date
+  if (isAutoSaveOn.value) {
+    //update last typing date
+    lastTypingDate = new Date()
+    isLatestSaved = false
+  }
+}
+
 
 const handleEditorClose = () => {
   //clean up
