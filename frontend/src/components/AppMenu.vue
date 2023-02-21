@@ -162,7 +162,7 @@
         />
         <n-input
             v-model:value="newGistName"
-            :placeholder="$t('hint.input_new_gist_name')"
+            :placeholder="$t('hint.input_new_gist_file_name')"
             style="margin-top: 20px"
         />
         <div id="submit-box">

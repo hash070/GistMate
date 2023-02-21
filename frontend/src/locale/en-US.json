@@ -8,7 +8,7 @@
     "input_key": "Please input your GitHub gist api key",
     "api_key": "GitHub gist API Key",
     "input_new_gist_collection": "Please input new gist collection title",
-    "input_new_gist_name": "Please input new gist name",
+    "input_new_gist_file_name": "Please input the first gist file's name",
     "request_failed": "Request failed",
     "save_success": "Save success",
     "file_name_update_success": "File name update success",
