@@ -333,10 +333,10 @@ const handleSave = async (text: string, html?: string) => {
 const handleDeleteGistFile = () => {
   console.log('Delete action')
   getDialog().warning({
-    title: 'Warning',
-    content: 'Are you sure?',
-    positiveText: 'Yes',
-    negativeText: 'No',
+    title: iT('hint.delete_gist_file_dialog_title'),
+    content: iT('hint.delete_gist_file_dialog_content'),
+    positiveText: iT('hint.yes'),
+    negativeText: iT('hint.no'),
     onPositiveClick: () => {
       infoMsg(iT('hint.delete_gist_file_action_started'))
       axios.patch('/gists/' + currentGistId.value, {
@@ -556,8 +556,8 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     getDialog().warning({
       title: iT('hint.delete_gist_collection'),
       content: iT('hint.delete_gist_collection_confirm'),
-      positiveText: 'Yes',
-      negativeText: 'No',
+      positiveText: iT('hint.yes'),
+      negativeText: iT('hint.no'),
       onPositiveClick: () => {
         infoMsg(iT('hint.delete_gist_collection_started'))
         //delete method
