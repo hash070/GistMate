@@ -35,7 +35,8 @@
     "submit": "提出する",
     "cancel": "キャンセル",
     "success": "Gist の取得に成功しました、ようこそ",
-    "failed": "Gist の取得に失敗しました、API キーを確認してください"
+    "failed": "Gist の取得に失敗しました、API キーを確認してください",
+    "logout": "ログアウト"
   },
   "gist": {
     "untitled": "無題",

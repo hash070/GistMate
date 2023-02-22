@@ -3,13 +3,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-10">
       <!-- Left Router Link -->
       <div class="flex">
-        <a href="#" class="mr-2">
+        <n-dropdown trigger="hover" :options="avatarOptions" @select="handleAvatarSelect">
           <n-avatar
               round
               :size="32"
-              src="/img/github-logo.ico"
+              :src="store.menu.avatar"
           />
-        </a>
+        </n-dropdown>
 
         <router-link to="/"
                      class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -47,9 +47,27 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {NAvatar, NDropdown} from "naive-ui";
+import {store} from "../store";
 import {useI18n} from "vue-i18n";
-import {loadGistsDataToMenu, successMsg} from "../utils/util";
+import {errorMsg, iT, loadGistsDataToMenu, successMsg} from "../utils/util";
 import {changeMDELanguage} from "../utils/mdEditor";
+import {i18n} from "../main";
+
+const avatarOptions = [
+  {
+    label: iT('login.logout'),
+    key: 'logout'
+  }
+]
+
+const handleAvatarSelect = (key: string | number) => {
+  console.log(key)
+  if (key==="logout"){
+    errorMsg(iT('login.failed'))
+    localStorage.removeItem('gistKey')
+    window.location.reload()
+  }
+}
 
 const languageOptions = [
   {
@@ -76,6 +94,8 @@ function handleSelect(key: string | number) {
   changeMDELanguage(String(key))
   //save language to local storage
   localStorage.setItem("language", String(key))
+  //save to store
+  store.app.language = String(key)
   //reload menu
   loadGistsDataToMenu(true)
 }

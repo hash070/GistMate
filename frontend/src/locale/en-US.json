@@ -35,7 +35,8 @@
     "submit": "Submit",
     "cancel": "Cancel",
     "success": "Gist fetch success, welcome back",
-    "failed": "Gist fetch failed, please check your api key"
+    "failed": "Gist fetch failed, please check your api key",
+    "logout": "Logout"
   },
   "gist": {
     "untitled": "Untitled",

@@ -35,7 +35,8 @@
     "submit": "提交",
     "cancel": "取消",
     "success": "Gist 获取成功，欢迎回来",
-    "failed": "Gist 获取失败，请检查您的 API Key"
+    "failed": "Gist 获取失败，请检查您的 API Key",
+    "logout": "退出登录"
   },
   "gist": {
     "untitled": "未命名",

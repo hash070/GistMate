@@ -18,6 +18,7 @@ export const store = reactive({
         isKeyInputModalShow: false,
         isNewGistModalShow: false,
         isNewGistFileModalShow: false,
+        language: 'en-US' as string,
     },
     gistsData: [] as Array<object>,
     loading: {
@@ -28,6 +29,7 @@ export const store = reactive({
         activeKey: null as string | null,
         createNewGistKey: '' as string,
         createNewGistFileName: '' as string,
+        avatar: '/img/github-logo.ico' as string,
     },
     editor: {
         textVal: "",
