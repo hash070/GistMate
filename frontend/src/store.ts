@@ -24,6 +24,9 @@ export const store = reactive({
         menu: false,
         editor: false
     },
+    menu:{
+        activeKey: null as string | null
+    },
     editor: {
         textVal: "",
         filename: "",

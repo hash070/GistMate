@@ -5,6 +5,7 @@
   "hint": {
     "network_success": "Network success",
     "network_error": "Network error",
+    "unknown_error": "Unknown error",
     "input_key": "Please input your GitHub gist api key",
     "api_key": "GitHub gist API Key",
     "input_new_gist_collection": "Please input new gist collection title",

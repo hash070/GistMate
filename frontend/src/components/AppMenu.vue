@@ -13,18 +13,19 @@
           @collapse="collapsed = true"
           @expand="collapsed = false"
       >
-        <n-spin :show="store.loading.menu">
+        <n-spin :show="store.loading.menu" style="height: calc(100vh - 3rem)">
           <template #icon style="display: flex;align-items: center">
             <n-icon>
               <IconLoader/>
             </n-icon>
           </template>
           <n-menu
-              v-model:value="activeKey"
+              v-model:value="store.menu.activeKey"
               @update:expanded-keys="handleMenuExpand"
               @update:value="handleMenuClick"
               :collapsed="collapsed"
               :collapsed-width="64"
+              :indent="12"
               style="min-height: calc(100vh - 3rem);"
               :collapsed-icon-size="22"
               :options="store.menuOptions"
@@ -35,7 +36,7 @@
           id="content"
           :native-scrollbar="false"
       >
-        <n-spin :show="store.loading.editor">
+        <n-spin :show="store.loading.editor" style="height: calc(100vh - 6rem)">
           <template #icon style="display: flex;align-items: center">
             <n-icon>
               <IconLoader/>
@@ -286,6 +287,7 @@ import {store} from '../store'
 import {IconFilePlus, IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
 import axios from "axios";
 import {
+  deleteGist,
   errorMsg,
   finishLoadingBar,
   getDialog,
@@ -317,7 +319,7 @@ const handleSave = (text: string, html?: string) => {
       //update the menu
       loadGistsDataToMenu();
       //restore the selected menu key
-      activeKey.value = res.data.files[store.editor.filename].raw_url
+      store.menu.activeKey = res.data.files[store.editor.filename].raw_url
       //update the content
       updateGistData(currentGistId.value, text)
     }).catch((err) => {
@@ -329,6 +331,8 @@ const handleSave = (text: string, html?: string) => {
     //if the file name is not changed, just update the content
     updateGistData(currentGistId.value, text)
   }
+  //reload latest menu data silently, because gist raw url will change after update
+  loadGistsDataToMenu(true)
   //update save flag
   store.editor.isLatestSaved = true
   console.log("handleSave: isLatestSaved", store.editor.isLatestSaved)
@@ -442,7 +446,7 @@ onUnmounted(() => {
 })
 
 
-const activeKey = ref<string | null>(null);
+// const activeKey = ref<string | null>(null);
 const collapsed = ref(false);
 //loading status of modal
 const isModalActionLoading = ref(false);
@@ -552,7 +556,6 @@ const handleViewModeChange = (checked: boolean) => {
 const handleMenuClick = (key: string, item: MenuOption) => {
   console.log('click, Key:', key, 'Item:', item)
   if (key === "create") {
-    //TODO: create new gist
     console.log('create new gist')
     store.app.isNewGistModalShow = true
   }else if (key === "delete") {
@@ -563,7 +566,9 @@ const handleMenuClick = (key: string, item: MenuOption) => {
       positiveText: 'Yes',
       negativeText: 'No',
       onPositiveClick: () => {
-        infoMsg(iT('hint.delete_gist_collection'))
+        infoMsg(iT('hint.delete_gist_collection_started'))
+        //delete method
+        deleteGist(item.parentKey as string)
       },
       onNegativeClick: () => {
         infoMsg(iT('hint.delete_gist_collection_action_cancelled'))
@@ -628,7 +633,7 @@ const handleNewGistFile = () => {
     //refresh gist menu
     loadGistsDataToMenu()
     //set selected key to the new file
-    activeKey.value = res.data.files[newGistFileName.value].raw_url
+    store.menu.activeKey = res.data.files[newGistFileName.value].raw_url
     cleanUpEditor()
     store.editor.textVal = "# HelloWorld"
     store.editor.filename = newGistFileName.value
@@ -651,7 +656,7 @@ const handleEditorClose = () => {
   store.editor.isLatestSaved = true
   isInEditMode.value = false
   store.editor.openingFile = false
-  activeKey.value = null
+  store.menu.activeKey = null
   isFirstEdit.value = true
 }
 

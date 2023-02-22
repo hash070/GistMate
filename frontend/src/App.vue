@@ -3,7 +3,15 @@ import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
 import {NButton, NConfigProvider, NInput, NModal} from 'naive-ui'
-import {errorMsg, infoMsg, iT, loadGistsDataToMenu, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
+import {
+  errorMsg,
+  handleAxiosError,
+  infoMsg,
+  iT,
+  loadGistsDataToMenu,
+  setMenuOptionsFromAxiosResponse,
+  successMsg
+} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
 
@@ -29,9 +37,7 @@ function onKeySubmit() {
         setMenuOptionsFromAxiosResponse(res)
       })
       .catch((err) => {
-        console.log(err)
-        errorMsg(iT('login.failed'))
-        localStorage.removeItem('gistKey')
+        handleAxiosError(err)
       }).finally(() => {
     isLoading.value = false
     //deactivate menu loading spin

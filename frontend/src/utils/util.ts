@@ -46,7 +46,7 @@ export const errorLoadingBar = () => {
 }
 
 //get a dialog instance
-export const getDialog = ():DialogApiInjection => {
+export const getDialog = (): DialogApiInjection => {
     return dialog
 }
 
@@ -59,27 +59,30 @@ export const renderIcon = (icon: Component) => {
 }
 
 //load all gists data to menu
-export const loadGistsDataToMenu = () => {
-    //activate menu loading spin
-    store.loading.menu = true
+export const loadGistsDataToMenu = (silentUpdate?: boolean) => {
+    //activate menu loading spin if quietUpdate is false or undefined
+    if (!silentUpdate) {
+        store.loading.menu = true
+    }
     //get gist data, add time_stamp to avoid cache
     axios.get('/gists' + '?time_stamp=' + new Date().getTime())
         .then((res) => {
-            successMsg(iT('login.success'))
-            console.log(res)
+            if (!silentUpdate) successMsg(iT('login.success'))
+            console.log('Load gist data to menu action:', res)
             //store all gist data into store.gistsData
             store.gistsData = res.data
             // process data (array) and push into store.menuOptions
             setMenuOptionsFromAxiosResponse(res)
+            //TODO: set activeKey when silentUpdate is true
         })
         .catch((err) => {
-            console.log(err)
-            errorMsg(iT('login.failed'))
-            localStorage.removeItem('gistKey')
+            handleAxiosError(err)
         })
         .finally(() => {
             //deactivate menu loading spin
-            store.loading.menu = false
+            if (!silentUpdate) {
+                store.loading.menu = false
+            }
         })
 }
 
@@ -96,8 +99,6 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
         if (gist.description === "") {
             gist.description = iT('gist.untitled')
         }
-
-
         tempMenuOptions = [
             ...tempMenuOptions,
             {
@@ -150,4 +151,36 @@ export const updateGistData = (gistId: string, content: any) => {
         console.log(err)
         errorMsg(iT('hint.save_failed'))
     })
+}
+
+//delete gist func
+export const deleteGist = (gistId: string) => {
+    axios.delete(`https://api.github.com/gists/${gistId}`)
+        .then((res) => {
+            infoMsg(iT('hint.delete_gist_collection_success'))
+            loadGistsDataToMenu()
+        })
+        .catch((err) => {
+            console.log(err);
+            infoMsg(iT('hint.request_failed'))
+        })
+}
+
+//handle error msg
+export const handleAxiosError = (err: any) => {
+    console.log(err)
+    //network error
+    if (err.response === undefined) {
+        errorMsg(iT('hint.network_error'))
+        return
+    }
+    //403 forbidden
+    if (err.response.status === 403) {
+        errorMsg(iT('login.failed'))
+        localStorage.removeItem('gistKey')
+        store.app.isKeyInputModalShow = true
+        return
+    }
+    //other error
+    errorMsg(iT('hint.unknown_error'))
 }
