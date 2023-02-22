@@ -3,17 +3,13 @@ import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
 import {NButton, NConfigProvider, NInput, NModal} from 'naive-ui'
-import {
-  errorMsg,
-  handleAxiosError,
-  infoMsg,
-  iT,
-  loadGistsDataToMenu,
-  setMenuOptionsFromAxiosResponse,
-  successMsg
-} from "./utils/util";
+import {handleAxiosError, iT, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
+import {useI18n} from "vue-i18n";
+import {changeMDELanguage} from "./utils/mdEditor";
+
+const {t, locale} = useI18n();
 
 //dark mode or light mode
 const theme = ref<GlobalTheme | null>(null)
@@ -47,6 +43,14 @@ function onKeySubmit() {
 
 onMounted(() => {
   console.log('app mounted')
+  //set language from local storage, if not exist, use default language (en-US)
+  const language = localStorage.getItem('language')
+  if (language) {
+    locale.value = String(language)
+    changeMDELanguage(String(language))
+  } else {
+    localStorage.setItem('language', 'en-US')
+  }
 })
 
 

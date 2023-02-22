@@ -48,7 +48,7 @@
 import {onMounted, ref} from "vue";
 import {NAvatar, NDropdown} from "naive-ui";
 import {useI18n} from "vue-i18n";
-import {successMsg} from "../utils/util";
+import {loadGistsDataToMenu, successMsg} from "../utils/util";
 import {changeMDELanguage} from "../utils/mdEditor";
 
 const languageOptions = [
@@ -74,6 +74,10 @@ function handleSelect(key: string | number) {
   successMsg(String(key))
   locale.value = String(key)
   changeMDELanguage(String(key))
+  //save language to local storage
+  localStorage.setItem("language", String(key))
+  //reload menu
+  loadGistsDataToMenu(true)
 }
 
 function handleClick() {

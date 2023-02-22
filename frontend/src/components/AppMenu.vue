@@ -36,7 +36,7 @@
           id="content"
           :native-scrollbar="false"
       >
-        <n-spin :show="store.loading.editor" style="height: calc(100vh - 6rem)">
+        <n-spin :show="store.loading.editor" style="height: calc(100vh - 6rem);">
           <template #icon style="display: flex;align-items: center">
             <n-icon>
               <IconLoader/>
@@ -239,11 +239,12 @@
             v-model:value="store.menu.createNewGistFileName"
             :placeholder="$t('hint.input_new_gist_collection')"
         />
-        <div id="submit-box">
+        <div id="submit-box" style="display: flex;justify-content: end">
           <n-button
               :loading="isModalActionLoading"
               :disabled="store.menu.createNewGistKey === ''"
               @click="handleNewGistFile"
+              type="primary"
           >
             {{ $t('login.submit') }}
           </n-button>
@@ -562,6 +563,8 @@ const handleMenuClick = (key: string, item: MenuOption) => {
         infoMsg(iT('hint.delete_gist_collection_started'))
         //delete method
         deleteGist(item.parentKey as string)
+        //close editor
+        handleEditorClose()
       },
       onNegativeClick: () => {
         infoMsg(iT('hint.delete_gist_collection_action_cancelled'))

@@ -119,9 +119,13 @@ VMdEditor.Codemirror = Codemirror;
 export const changeMDELanguage = (lang) => {
     if (lang === 'en-US') {
         VMdEditor.lang.use('en-US', enUS);
+        return;
     } else if (lang === 'zh-CN') {
         VMdEditor.lang.use('zh-CN', zhCN);
+        return;
     }
+    //fallback to en-US
+    VMdEditor.lang.use('en-US', enUS);
 }
 
 export {VMdEditor, VMdPreview};
