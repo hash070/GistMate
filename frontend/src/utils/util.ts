@@ -61,6 +61,7 @@ export const renderIcon = (icon: Component) => {
 //load all gists data to menu
 export const loadGistsDataToMenu = (silentUpdate?: boolean) => {
     //activate menu loading spin if quietUpdate is false or undefined
+    //menu sequence will be not updated
     if (!silentUpdate) {
         store.loading.menu = true
     }
@@ -82,6 +83,10 @@ export const loadGistsDataToMenu = (silentUpdate?: boolean) => {
             //deactivate menu loading spin
             if (!silentUpdate) {
                 store.loading.menu = false
+            }else {
+                //TODO: don't know why the menu sequence will not updated if the menu loading status was not changed
+                store.loading.menu = true
+                store.loading.menu = false
             }
         })
 }
@@ -94,40 +99,50 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
         key: 'create',
         icon: renderIcon(IconFilePlus),
     }]
-    res.data.map((gist: any) => {
-        //if the description is "", set it to 'Untitled'
-        if (gist.description === "") {
-            gist.description = iT('gist.untitled')
-        }
-        tempMenuOptions = [
-            ...tempMenuOptions,
-            {
-                label: gist.description,
-                key: gist.id,
-                icon: renderIcon(LibraryIcon),
-                //file is a object, not an array
-                //need to use Object.keys to get the keys
-                children: Object.keys(gist.files).map((child: any) => {
-                    return {
-                        label: gist.files[child].filename,
-                        key: gist.files[child].raw_url,
-                        icon: renderIcon(BookIcon),
+    console.log('setMenuOptionsFromAxiosResponse action:', res.data)
+    res.data
+        .sort((a: any, b: any) => b.updated_at.localeCompare(a.updated_at)) // Sort the array by updated_at in descending order
+        .map((gist: any) => {
+            //if the description is "", set it to 'Untitled'
+            if (gist.description === "") {
+                gist.description = iT('gist.untitled')
+            }
+            tempMenuOptions = [
+                ...tempMenuOptions,
+                {
+                    label: gist.description,
+                    key: gist.id,
+                    icon: renderIcon(LibraryIcon),
+                    //file is a object, not an array
+                    //need to use Object.keys to get the keys
+                    children: Object.keys(gist.files).map((child: any) => {
+                        return {
+                            label: gist.files[child].filename,
+                            key: gist.files[child].raw_url,
+                            icon: renderIcon(BookIcon),
+                            parentKey: gist.id,
+                            isPublic: gist.public,
+                            updatedAt: gist.updated_at,
+                            // to: '/gist/'+gist.id+'/'+child.filename
+                        }
+                    }).concat({// Add the delete object to the end of children array
+                        label: iT('gist.create_new_gist_file'),
+                        key: 'newGist',
+                        icon: renderIcon(IconFilePlus),
                         parentKey: gist.id,
                         isPublic: gist.public,
                         updatedAt: gist.updated_at,
-                        // to: '/gist/'+gist.id+'/'+child.filename
-                    }
-                }).concat({
-                    label: iT('gist.delete_gist_collection'),
-                    key: 'delete',
-                    icon: renderIcon(IconTrashX),
-                    parentKey: gist.id,
-                    isPublic: gist.public,
-                    updatedAt: gist.updated_at,
-                }) // Add the delete object to the end of children array
-            }
-        ]
-    })
+                    }).concat({
+                        label: iT('gist.delete_gist_collection'),
+                        key: 'delete',
+                        icon: renderIcon(IconTrashX),
+                        parentKey: gist.id,
+                        isPublic: gist.public,
+                        updatedAt: gist.updated_at,
+                    })
+                }
+            ]
+        })
     store.menuOptions = tempMenuOptions
 }
 
@@ -171,6 +186,7 @@ export const handleAxiosError = (err: any) => {
     console.log(err)
     //network error
     if (err.response === undefined) {
+        console.log('network error detected', err)
         errorMsg(iT('hint.network_error'))
         return
     }

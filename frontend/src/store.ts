@@ -25,7 +25,9 @@ export const store = reactive({
         editor: false
     },
     menu:{
-        activeKey: null as string | null
+        activeKey: null as string | null,
+        createNewGistKey: '' as string,
+        createNewGistFileName: '' as string,
     },
     editor: {
         textVal: "",

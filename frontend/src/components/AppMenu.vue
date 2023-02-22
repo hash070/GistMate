@@ -125,19 +125,6 @@
                   </template>
                 </n-switch>
               </div>
-
-              <n-button
-                  icon-placement="left"
-                  secondary strong
-                  @click="()=>{store.app.isNewGistFileModalShow = true}"
-              >
-                <template #icon>
-                  <n-icon>
-                    <IconFilePlus/>
-                  </n-icon>
-                </template>
-                {{ $t('gist.create_new_gist_file') }}
-              </n-button>
               <n-button
                   icon-placement="left"
                   strong secondary
@@ -249,13 +236,13 @@
           :positive-text="$t('login.submit')"
       >
         <n-input
-            v-model:value="newGistFileName"
+            v-model:value="store.menu.createNewGistFileName"
             :placeholder="$t('hint.input_new_gist_collection')"
         />
         <div id="submit-box">
           <n-button
               :loading="isModalActionLoading"
-              :disabled="newGistFileName === ''"
+              :disabled="store.menu.createNewGistKey === ''"
               @click="handleNewGistFile"
           >
             {{ $t('login.submit') }}
@@ -333,6 +320,7 @@ const handleSave = (text: string, html?: string) => {
   }
   //reload latest menu data silently, because gist raw url will change after update
   loadGistsDataToMenu(true)
+  console.log("====LoadGistsDataToMenu action performed====")
   //update save flag
   store.editor.isLatestSaved = true
   console.log("handleSave: isLatestSaved", store.editor.isLatestSaved)
@@ -442,7 +430,7 @@ onUnmounted(() => {
   clearInterval(autoSaveInterval)
   //TODO: ask user if they want to save the changes
   //remove store.editor.textVal
-  // store.editor.textVal = ''
+  store.editor.textVal = ''
 })
 
 
@@ -451,7 +439,6 @@ const collapsed = ref(false);
 //loading status of modal
 const isModalActionLoading = ref(false);
 const newGistCollectionName = ref('')
-const newGistFileName = ref('')
 const newGistName = ref('')
 const isNewGistPublic = ref(false)
 const isCurrentGistPublic = ref(false)
@@ -558,7 +545,11 @@ const handleMenuClick = (key: string, item: MenuOption) => {
   if (key === "create") {
     console.log('create new gist')
     store.app.isNewGistModalShow = true
-  }else if (key === "delete") {
+  } else if (key === "newGist") {
+    store.menu.createNewGistKey = item.parentKey as string
+    store.menu.createNewGistFileName = ''
+    store.app.isNewGistFileModalShow = true
+  } else if (key === "delete") {
     console.log('delete gist:', item.parentKey)
     getDialog().warning({
       title: iT('hint.delete_gist_collection'),
@@ -574,8 +565,7 @@ const handleMenuClick = (key: string, item: MenuOption) => {
         infoMsg(iT('hint.delete_gist_collection_action_cancelled'))
       }
     })
-  }
-  else {
+  } else {
     //TODO: ask user if they want to save the changes
     cleanUpEditor()
     //create a new axios instance to bypass global interceptors
@@ -592,7 +582,8 @@ const handleMenuClick = (key: string, item: MenuOption) => {
         'time-stamp': new Date().getTime()
       }
     }).then((response) => {
-      store.editor.textVal = response.data
+      console.log('handleMenuClick action, data fetch:', response)
+      store.editor.textVal = response.data.toString()
       store.editor.filename = item.label as string
       gistFileNameBeforeEdit = item.label as string
       isCurrentGistPublic.value = item.isPublic as boolean
@@ -621,9 +612,9 @@ const handleEditorChange = (text: string, html: string) => {
 
 const handleNewGistFile = () => {
   isModalActionLoading.value = true
-  axios.patch('/gists/' + currentGistId.value, {
+  axios.patch('/gists/' + store.menu.createNewGistKey, {
     files: {
-      [newGistFileName.value]: {
+      [store.menu.createNewGistFileName]: {
         content: "# HelloWorld"
       }
     }
@@ -633,11 +624,11 @@ const handleNewGistFile = () => {
     //refresh gist menu
     loadGistsDataToMenu()
     //set selected key to the new file
-    store.menu.activeKey = res.data.files[newGistFileName.value].raw_url
+    store.menu.activeKey = res.data.files[store.menu.createNewGistFileName].raw_url
     cleanUpEditor()
     store.editor.textVal = "# HelloWorld"
-    store.editor.filename = newGistFileName.value
-    gistFileNameBeforeEdit = newGistFileName.value
+    store.editor.filename = store.menu.createNewGistFileName
+    gistFileNameBeforeEdit = store.menu.createNewGistFileName
   }).catch((err) => {
     console.log(err)
     errorMsg(iT('gist.create_new_gist_file_failed'))
