@@ -27,7 +27,7 @@ export const store = reactive({
     },
     menu:{
         activeKey: null as string | null,
-        createNewGistKey: '' as string,
+        currentGistCollectionKey: '' as string,
         createNewGistFileName: '' as string,
         avatar: '/img/github-logo.ico' as string,
     },

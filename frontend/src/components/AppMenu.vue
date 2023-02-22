@@ -159,6 +159,8 @@
           <v-md-editor
               v-else
               v-model="store.editor.textVal"
+              :disabled-menus="[]"
+              @upload-image="handleUploadImage"
               height="calc(100vh - 6rem)"
               :include-level="[1 ,2, 3]"
               @save="handleSave"
@@ -242,7 +244,7 @@
         <div id="submit-box" style="display: flex;justify-content: end">
           <n-button
               :loading="isModalActionLoading"
-              :disabled="store.menu.createNewGistKey === ''"
+              :disabled="store.menu.currentGistCollectionKey === ''"
               @click="handleNewGistFile"
               type="primary"
           >
@@ -545,11 +547,14 @@ const handleViewModeChange = (checked: boolean) => {
 
 const handleMenuClick = (key: string, item: MenuOption) => {
   console.log('click, Key:', key, 'Item:', item)
+
+  //set current gist collection key
+  store.menu.currentGistCollectionKey = item.parentKey as string
+
   if (key === "create") {
     console.log('create new gist')
     store.app.isNewGistModalShow = true
   } else if (key === "newGist") {
-    store.menu.createNewGistKey = item.parentKey as string
     store.menu.createNewGistFileName = ''
     store.app.isNewGistFileModalShow = true
   } else if (key === "delete") {
@@ -615,9 +620,10 @@ const handleEditorChange = (text: string, html: string) => {
   }
 }
 
+//create new gist file handler
 const handleNewGistFile = () => {
   isModalActionLoading.value = true
-  axios.patch('/gists/' + store.menu.createNewGistKey, {
+  axios.patch('/gists/' + store.menu.currentGistCollectionKey, {
     files: {
       [store.menu.createNewGistFileName]: {
         content: "# HelloWorld"
@@ -655,6 +661,97 @@ const handleEditorClose = () => {
   store.menu.activeKey = null
   isFirstEdit.value = true
 }
+
+//image upload handler
+const handleUploadImage = (event: any, insertImage: any, files: any) => {
+  console.log('handleUploadImage:', 'event:', event, 'InsertImage: ', insertImage, "files:", files)
+  let imgFileName = new Date().toISOString()
+  console.log('imgFileName:', imgFileName)
+
+  console.log('UploadImage Gist Key:', store.menu.currentGistCollectionKey)
+  console.log("Uploading image file:", files[0])
+
+  // Create a new FormData object
+  const formData = new FormData();
+
+  // Append the file to the FormData object
+  formData.append(imgFileName, files[0]);
+
+  console.log("image upload formData:", formData)
+
+  //upload an image to current gist collection
+  //TODO:Not working, return 422 err, can't upload file
+  /*
+  axios.patch('/gists/' + store.menu.currentGistCollectionKey, {
+    files: {
+      [imgFileName]: {
+        content: formData
+      }
+    }
+  }).then((res) => {
+    console.log("new gist save success:", res)
+    const uploadedImgObj = res.data.files[imgFileName]
+    //the raw url is named `raw_url` in the obj
+    const uploadedImgRawUrl = uploadedImgObj.raw_url
+    //insert the image to the editor
+    store.editor.textVal += `![${imgFileName}](${uploadedImgRawUrl})`
+    successMsg(iT('gist.image_upload_success'))
+    successMsg(iT('gist.image_upload_success'))
+  }).catch((err) => {
+    console.log(err)
+    errorMsg(iT('gist.image_upload_failed'))
+  }).finally(() => {
+    store.app.isNewGistFileModalShow = false
+    isModalActionLoading.value = false
+  })
+  */
+}
+
+
+/*
+//Worked, but seems not a good way
+const handleUploadImage = (event: any, insertImage: any, files: any) => {
+  console.log('handleUploadImage:', 'event:', event, 'InsertImage: ', insertImage, "files:", files)
+  const imgFileName = new Date().toISOString()+'.png'
+  console.log('imgFileName:', imgFileName)
+
+  console.log('UploadImage Gist Key:', store.menu.currentGistCollectionKey)
+  console.log("Uploading image file:", files[0])
+
+  const reader = new FileReader();
+  reader.readAsDataURL(files[0]);
+  reader.onload = function(event) {
+    //@ts-ignore
+    const base64Img = event.target.result;
+    console.log('base64Img:', base64Img);
+    axios.patch('/gists/' + store.menu.currentGistCollectionKey, {
+      files: {
+        [imgFileName]: {
+          content: base64Img
+        }
+      }
+    }).then((res) => {
+      console.log("new gist save success:", res)
+      //get the raw url of the uploaded image
+      // //res.data.files is an object arr, filter the obj that `filename` prop === imgFileName
+      // const uploadedImgObj = res.data.files.filter((file: any) => file.filename === imgFileName)
+      const uploadedImgObj = res.data.files[imgFileName]
+      //the raw url is named `raw_url` in the obj
+      const uploadedImgRawUrl = uploadedImgObj.raw_url
+      //insert the image to the editor
+      store.editor.textVal += `![${imgFileName}](${uploadedImgRawUrl})`
+      successMsg(iT('gist.image_upload_success'))
+    }).catch((err) => {
+      console.log(err)
+      errorMsg(iT('gist.image_upload_failed'))
+    }).finally(() => {
+      store.app.isNewGistFileModalShow = false
+      isModalActionLoading.value = false
+    })
+  };
+}
+*/
+
 
 //Editor clean handler
 const cleanUpEditor = () => {

@@ -49,7 +49,7 @@ import {onMounted, ref} from "vue";
 import {NAvatar, NDropdown} from "naive-ui";
 import {store} from "../store";
 import {useI18n} from "vue-i18n";
-import {errorMsg, iT, loadGistsDataToMenu, successMsg} from "../utils/util";
+import {errorMsg, getDialog, iT, loadGistsDataToMenu, successMsg} from "../utils/util";
 import {changeMDELanguage} from "../utils/mdEditor";
 import {i18n} from "../main";
 
@@ -62,10 +62,18 @@ const avatarOptions = [
 
 const handleAvatarSelect = (key: string | number) => {
   console.log(key)
-  if (key==="logout"){
-    errorMsg(iT('login.failed'))
-    localStorage.removeItem('gistKey')
-    window.location.reload()
+  if (key === "logout") {
+    getDialog().warning({
+      title: iT('login.confirm_logout'),
+      content: iT('login.confirm_logout_content'),
+      positiveText: iT('login.logout'),
+      negativeText: iT('hint.no'),
+      onPositiveClick: () => {
+        errorMsg(iT('login.failed'))
+        localStorage.removeItem('gistKey')
+        window.location.reload()
+      }
+    })
   }
 }
 

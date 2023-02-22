@@ -36,7 +36,9 @@
     "cancel": "Cancel",
     "success": "Gist fetch success, welcome back",
     "failed": "Gist fetch failed, please check your api key",
-    "logout": "Logout"
+    "logout": "Logout",
+    "confirm_logout": "Are you sure to logout?",
+    "confirm_logout_content": "Local authentication data will be cleared after logout"
   },
   "gist": {
     "untitled": "Untitled",
@@ -55,6 +57,8 @@
     "delete_gist_file": "Delete this gist file",
     "delete_gist_collection": "Delete this gist collection",
     "confirm_delete_gist_file": "Are you sure to delete this gist file?",
-    "confirm_delete_gist_collection": "Are you sure to delete this gist collection?"
+    "confirm_delete_gist_collection": "Are you sure to delete this gist collection?",
+    "image_upload_success": "Image upload success",
+    "image_upload_failed": "Image upload failed"
   }
 }

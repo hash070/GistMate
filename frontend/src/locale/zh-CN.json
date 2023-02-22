@@ -36,7 +36,9 @@
     "cancel": "取消",
     "success": "Gist 获取成功，欢迎回来",
     "failed": "Gist 获取失败，请检查您的 API Key",
-    "logout": "退出登录"
+    "logout": "退出登录",
+    "confirm_logout": "确定要登出吗？",
+    "confirm_logout_content": "登出后本地认证信息将被清除"
   },
   "gist": {
     "untitled": "未命名",
@@ -55,6 +57,8 @@
     "delete_gist_file": "删除此 Gist 文件",
     "delete_gist_collection": "删除此 Gist 集合",
     "confirm_delete_gist_file": "是否确定删除此 Gist 文件？",
-    "confirm_delete_gist_collection": "是否确定删除此 Gist 集合？"
+    "confirm_delete_gist_collection": "是否确定删除此 Gist 集合？",
+    "image_upload_success": "图片上传成功",
+    "image_upload_failed": "图片上传失败"
   }
 }

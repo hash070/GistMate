@@ -36,7 +36,9 @@
     "cancel": "キャンセル",
     "success": "Gist の取得に成功しました、ようこそ",
     "failed": "Gist の取得に失敗しました、API キーを確認してください",
-    "logout": "ログアウト"
+    "logout": "ログアウト",
+    "confirm_logout": "ログアウトしますか？",
+    "confirm_logout_content": "ローカルの認証データがログアウト後にクリアされます"
   },
   "gist": {
     "untitled": "無題",
@@ -55,6 +57,8 @@
     "delete_gist_file": "この Gist ファイルを削除する",
     "delete_gist_collection": "この Gist コレクションを削除する",
     "confirm_delete_gist_file": "この Gist ファイルを削除してもよろしいですか？",
-    "confirm_delete_gist_collection": "この Gist コレクションを削除してもよろしいですか？"
+    "confirm_delete_gist_collection": "この Gist コレクションを削除してもよろしいですか？",
+    "image_upload_success": "画像のアップロードが成功しました",
+    "image_upload_failed": "画像のアップロードに失敗しました"
   }
 }
