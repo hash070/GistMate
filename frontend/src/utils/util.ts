@@ -83,7 +83,7 @@ export const loadGistsDataToMenu = (silentUpdate?: boolean) => {
             //deactivate menu loading spin
             if (!silentUpdate) {
                 store.loading.menu = false
-            }else {
+            } else {
                 //TODO: don't know why the menu sequence will not updated if the menu loading status was not changed
                 store.loading.menu = true
                 store.loading.menu = false
@@ -152,21 +152,22 @@ export const getNoInterceptorAxios = () => {
 }
 
 //update gist data
-export const updateGistData = (gistId: string, content: any) => {
-    axios.patch('/gists/' + gistId, {
-        files: {
-            [store.editor.filename]: {
-                content: content
+export const updateGistData = async (gistId: string, content: any) => {
+    try {
+        const res = await axios.patch(`/gists/${gistId}`, {
+            files: {
+                [store.editor.filename]: {
+                    content: content
+                }
             }
-        }
-    }).then((res) => {
-        console.log(res)
-        successMsg(iT('hint.save_success'))
-    }).catch((err) => {
-        console.log(err)
-        errorMsg(iT('hint.save_failed'))
-    })
-}
+        });
+        console.log(res);
+        successMsg(iT('hint.save_success'));
+    } catch (err) {
+        console.log(err);
+        errorMsg(iT('hint.save_failed'));
+    }
+};
 
 //delete gist func
 export const deleteGist = (gistId: string) => {

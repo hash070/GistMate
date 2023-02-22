@@ -271,7 +271,7 @@ import {
   NTooltip
 } from 'naive-ui'
 import {store} from '../store'
-import {IconFilePlus, IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
+import {IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
 import axios from "axios";
 import {
   deleteGist,
@@ -288,7 +288,7 @@ import {
 } from "../utils/util";
 
 //save gist file
-const handleSave = (text: string, html?: string) => {
+const handleSave = async (text: string, html?: string) => {
   console.log('Save action:', text)
 
   //if the file name is changed, update the file name before update the content
@@ -299,16 +299,16 @@ const handleSave = (text: string, html?: string) => {
           filename: store.editor.filename
         }
       }
-    }).then((res) => {
+    }).then(async (res) => {
       console.log(res)
       gistFileNameBeforeEdit = store.editor.filename
       successMsg(iT('hint.file_name_update_success'))
+      //update the content
+      await updateGistData(currentGistId.value, text)
       //update the menu
       loadGistsDataToMenu();
       //restore the selected menu key
       store.menu.activeKey = res.data.files[store.editor.filename].raw_url
-      //update the content
-      updateGistData(currentGistId.value, text)
     }).catch((err) => {
       console.log(err)
       errorMsg(iT('hint.file_name_update_failed'))
@@ -316,14 +316,13 @@ const handleSave = (text: string, html?: string) => {
     })
   } else {
     //if the file name is not changed, just update the content
-    updateGistData(currentGistId.value, text)
+    await updateGistData(currentGistId.value, text)
   }
   //reload latest menu data silently, because gist raw url will change after update
   loadGistsDataToMenu(true)
   console.log("====LoadGistsDataToMenu action performed====")
   //update save flag
   store.editor.isLatestSaved = true
-  console.log("handleSave: isLatestSaved", store.editor.isLatestSaved)
   gistFileContentBeforeEdit = text
   //update last save time
   lastTypingDate.value = new Date()
@@ -418,6 +417,9 @@ onMounted(() => {
         console.log('last typing date:', lastTypingDate.value)
         console.log('now:', now)
         console.log('==============================')
+        //update save flag to prevent multiple save actions
+        store.editor.isLatestSaved = true
+        lastTypingDate.value = new Date()
         //save method
         handleSave(store.editor.textVal, '')
       }
@@ -529,7 +531,7 @@ const handleViewModeChange = (checked: boolean) => {
     gistFileContentBeforeEdit = store.editor.textVal
   } else {
     console.log('enter view mode')
-    //check if the content is changed
+    //check if the content has changed
     if (gistFileContentBeforeEdit !== store.editor.textVal) {
       console.log('content changed')
       handleSave(store.editor.textVal)
