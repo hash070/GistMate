@@ -453,7 +453,7 @@ const isNewGistPublic = ref(false)
 const isCurrentGistPublic = ref(false)
 const currentGistId = ref('')
 const isInEditMode = ref(false)
-const isAutoSaveOn = ref(true)
+const isAutoSaveOn = ref(false)
 //last update date
 const lastTypingDate = ref(new Date())
 //isFirstEdit flag
@@ -536,8 +536,12 @@ const handleViewModeChange = (checked: boolean) => {
   if (checked) {
     console.log('enter edit mode')
     gistFileContentBeforeEdit = store.editor.textVal
+    //auto collapse the menu
+    collapsed.value = true
   } else {
     console.log('enter view mode')
+    //auto expand the menu
+    collapsed.value = false
     //check if the content has changed
     if (gistFileContentBeforeEdit !== store.editor.textVal) {
       console.log('content changed')
