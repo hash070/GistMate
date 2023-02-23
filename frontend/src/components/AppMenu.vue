@@ -109,12 +109,12 @@
                 >
                   <template #checked-icon>
                     <n-icon>
-                      <IconLockOpen/>
+                      <IconLock/>
                     </n-icon>
                   </template>
                   <template #unchecked-icon>
                     <n-icon>
-                      <IconLock/>
+                      <IconLockOpen/>
                     </n-icon>
                   </template>
                   <template #checked>
@@ -151,11 +151,15 @@
             </div>
           </n-scrollbar>
 
-          <v-md-preview
+          <n-scrollbar
               v-if="!isInEditMode"
-              :text="store.editor.textVal"
-              height="calc(100vh - 6rem)"
-          />
+              trigger="none"
+              style="height: calc(100vh - 6rem)"
+          >
+            <v-md-preview
+                :text="store.editor.textVal"
+            />
+          </n-scrollbar>
           <v-md-editor
               v-else
               v-model="store.editor.textVal"
