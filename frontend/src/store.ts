@@ -19,6 +19,7 @@ export const store = reactive({
         isNewGistModalShow: false,
         isNewGistFileModalShow: false,
         language: 'en-US' as string,
+        silentMode: false as boolean,
     },
     gistsData: [] as Array<object>,
     loading: {
@@ -36,5 +37,7 @@ export const store = reactive({
         filename: "",
         openingFile: false,//is currently opening file
         isLatestSaved: true,//saving status flag
+        autoSave: false,//auto save
+        imgRepo: "",
     }
 })

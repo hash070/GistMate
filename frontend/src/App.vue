@@ -51,6 +51,11 @@ onMounted(() => {
   } else {
     localStorage.setItem('language', 'en-US')
   }
+
+  //load localStorage data to store
+  store.editor.imgRepo = localStorage.getItem('imgRepo') || ''
+  store.editor.autoSave = localStorage.getItem('autoSave') === 'true'
+  store.app.silentMode = localStorage.getItem('silentMode') === 'true'
 })
 
 

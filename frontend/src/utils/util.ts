@@ -19,7 +19,7 @@ const {message, notification, dialog, loadingBar} = createDiscreteApi(
 )
 
 export const successMsg = (msg: string) => {
-    message.success(msg)
+    if (!store.app.silentMode) message.success(msg)
 }
 
 export const errorMsg = (msg: string) => {
@@ -27,22 +27,38 @@ export const errorMsg = (msg: string) => {
 }
 
 export const infoMsg = (msg: string) => {
-    message.info(msg)
+    if (!store.app.silentMode) message.info(msg)
 }
 
 //start loading bar
 export const startLoadingBar = () => {
-    loadingBar.start()
+    if (!store.app.silentMode) loadingBar.start()
 }
 
 //finish loading bar
 export const finishLoadingBar = () => {
-    loadingBar.finish()
+    if (!store.app.silentMode) loadingBar.finish()
 }
 
 //error loading bar
 export const errorLoadingBar = () => {
-    loadingBar.error()
+    if (!store.app.silentMode) loadingBar.error()
+}
+
+//info notification
+export const infoNotification = (title: string, msg: string) => {
+    if (!store.app.silentMode) notification.info({
+        title: title,
+        content: msg,
+    })
+}
+
+//error notification
+export const errorNotification = (title: string, msg: string) => {
+    notification.error({
+        title: title,
+        content: msg,
+    })
 }
 
 //get a dialog instance
@@ -56,6 +72,17 @@ export const iT = (key: string) => {
 
 export const renderIcon = (icon: Component) => {
     return () => h(NIcon, null, {default: () => h(icon)})
+}
+
+//random string generator
+export const randomString = (length: number) => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 //load all gists data to menu
@@ -106,6 +133,10 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
             //if the description is "", set it to 'Untitled'
             if (gist.description === "") {
                 gist.description = iT('gist.untitled')
+            }
+            //if the description is "img" or "pic" or "i" or "p", don't show it in menu
+            if (gist.description === "img" || gist.description === "pic" || gist.description === "i" || gist.description === "p") {
+                return
             }
             tempMenuOptions = [
                 ...tempMenuOptions,

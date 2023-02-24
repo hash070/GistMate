@@ -15,9 +15,9 @@
                      class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
           {{ $t("home") }}
         </router-link>
-        <router-link to="/404"
+        <router-link to="/settings"
                      class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-          404
+          {{ $t("settings.settings") }}
         </router-link>
       </div>
       <!-- Middle text -->

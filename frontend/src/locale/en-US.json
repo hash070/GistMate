@@ -2,10 +2,19 @@
   "hello": "Hello World",
   "home": "Home",
   "language": "Language",
+  "settings": {
+    "settings": "Settings",
+    "save": "Save",
+    "img_repo": "Image repository",
+    "auto_save": "Default auto save the editor content",
+    "silent_mode": "Silent mode"
+  },
   "hint": {
     "network_success": "Network success",
     "network_error": "Network error",
     "unknown_error": "Unknown error",
+    "img_gist_repo_err": "No Git repository was set for images, or the repository address key did not exist",
+    "no_gist_repo_hint": "Please go to settings to set a valid gist repository address key for images",
     "yes": "Yes",
     "no": "No",
     "input_key": "Please input your GitHub gist api key",

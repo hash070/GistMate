@@ -105,7 +105,7 @@
               <div style="min-width: 8rem">
                 <n-switch
                     :rail-style="viewOrEditSwitchStyle"
-                    v-model:value="isAutoSaveOn"
+                    v-model:value="store.editor.autoSave"
                 >
                   <template #checked-icon>
                     <n-icon>
@@ -282,13 +282,13 @@ import {IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/ico
 import axios from "axios";
 import {
   deleteGist,
-  errorMsg,
+  errorMsg, errorNotification,
   finishLoadingBar,
   getDialog,
   getNoInterceptorAxios,
-  infoMsg,
+  infoMsg, infoNotification,
   iT,
-  loadGistsDataToMenu,
+  loadGistsDataToMenu, randomString,
   startLoadingBar,
   successMsg,
   updateGistData
@@ -410,10 +410,10 @@ onMounted(() => {
   //Interval to check if the last typing date is 3 seconds later than now
   autoSaveInterval = setInterval(() => {
     console.log('Interval: isLatestSaved', store.editor.isLatestSaved)
-    if (isInEditMode.value && isAutoSaveOn.value && !store.editor.isLatestSaved) {
+    if (isInEditMode.value && store.editor.autoSave && !store.editor.isLatestSaved) {
       //log three conditions
       console.log('isInEditMode:', isInEditMode.value)
-      console.log('isAutoSaveOn:', isAutoSaveOn.value)
+      console.log('store.editor.autoSave:', store.editor.autoSave)
       console.log('isLatestSaved:', store.editor.isLatestSaved)
       //check if the date is 3 seconds later than last typing date
       const now = new Date()
@@ -453,7 +453,6 @@ const isNewGistPublic = ref(false)
 const isCurrentGistPublic = ref(false)
 const currentGistId = ref('')
 const isInEditMode = ref(false)
-const isAutoSaveOn = ref(false)
 //last update date
 const lastTypingDate = ref(new Date())
 //isFirstEdit flag
@@ -503,7 +502,7 @@ const onNewGistSubmit = () => {
     "public": isNewGistPublic.value,
     "files": {
       [newGistName.value]: {
-        "content": "# Hello World"
+        "content": "# Hello [GistMate](https://github.com/hash070/GistMate)"
       }
     }
   }
@@ -618,7 +617,7 @@ const handleMenuClick = (key: string, item: MenuOption) => {
 
 const handleEditorChange = (text: string, html: string) => {
   //If auto-saving is on and it's in edit mode but it's not the first time editing, update the last typing date.
-  if (isAutoSaveOn.value && isInEditMode.value && !isFirstEdit.value) {
+  if (store.editor.autoSave && isInEditMode.value && !isFirstEdit.value) {
     //update last typing date
     lastTypingDate.value = new Date()
     store.editor.isLatestSaved = false
@@ -634,7 +633,7 @@ const handleNewGistFile = () => {
   axios.patch('/gists/' + store.menu.currentGistCollectionKey, {
     files: {
       [store.menu.createNewGistFileName]: {
-        content: "# HelloWorld"
+        content: "# Hello [GistMate](https://github.com/hash070/GistMate)"
       }
     }
   }).then((res) => {
@@ -645,7 +644,7 @@ const handleNewGistFile = () => {
     //set selected key to the new file
     store.menu.activeKey = res.data.files[store.menu.createNewGistFileName].raw_url
     cleanUpEditor()
-    store.editor.textVal = "# HelloWorld"
+    store.editor.textVal = "# Hello [GistMate](https://github.com/hash070/GistMate)"
     store.editor.filename = store.menu.createNewGistFileName
     gistFileNameBeforeEdit = store.menu.createNewGistFileName
   }).catch((err) => {
@@ -671,6 +670,7 @@ const handleEditorClose = () => {
 }
 
 //image upload handler
+/*
 const handleUploadImage = (event: any, insertImage: any, files: any) => {
   console.log('handleUploadImage:', 'event:', event, 'InsertImage: ', insertImage, "files:", files)
   let imgFileName = new Date().toISOString()
@@ -689,7 +689,7 @@ const handleUploadImage = (event: any, insertImage: any, files: any) => {
 
   //upload an image to current gist collection
   //TODO:Not working, return 422 err, can't upload file
-  /*
+
   axios.patch('/gists/' + store.menu.currentGistCollectionKey, {
     files: {
       [imgFileName]: {
@@ -712,53 +712,60 @@ const handleUploadImage = (event: any, insertImage: any, files: any) => {
     store.app.isNewGistFileModalShow = false
     isModalActionLoading.value = false
   })
-  */
 }
+*/
 
-
-/*
 //Worked, but seems not a good way
 const handleUploadImage = (event: any, insertImage: any, files: any) => {
   console.log('handleUploadImage:', 'event:', event, 'InsertImage: ', insertImage, "files:", files)
-  const imgFileName = new Date().toISOString()+'.png'
+  const imgFileName = randomString(16)
   console.log('imgFileName:', imgFileName)
 
-  console.log('UploadImage Gist Key:', store.menu.currentGistCollectionKey)
+  if (store.editor.imgRepo === '') errorNotification(iT('hint.no_gist_repo'), iT('hint.no_gist_repo_hint'))
+
+  console.log('UploadImage Gist Key:', store.editor.imgRepo)
   console.log("Uploading image file:", files[0])
 
   const reader = new FileReader();
   reader.readAsDataURL(files[0]);
-  reader.onload = function(event) {
+  reader.onload = function (event) {
     //@ts-ignore
-    const base64Img = event.target.result;
-    console.log('base64Img:', base64Img);
-    axios.patch('/gists/' + store.menu.currentGistCollectionKey, {
+    const base64Img = event.target.result as string;
+
+    const imageParts = base64Img.split(';base64,');
+    const imageType = imageParts[0].split(':')[1];
+    const base64Data = imageParts[1];
+
+    console.log('base64Data:', base64Data);
+    axios.patch('/gists/' + store.editor.imgRepo, {
       files: {
         [imgFileName]: {
-          content: base64Img
+          content: base64Data
         }
       }
     }).then((res) => {
       console.log("new gist save success:", res)
       //get the raw url of the uploaded image
-      // //res.data.files is an object arr, filter the obj that `filename` prop === imgFileName
-      // const uploadedImgObj = res.data.files.filter((file: any) => file.filename === imgFileName)
       const uploadedImgObj = res.data.files[imgFileName]
       //the raw url is named `raw_url` in the obj
       const uploadedImgRawUrl = uploadedImgObj.raw_url
+
+      let regex = "\\/\\/([^\\/]+)\\/([^*]+)"
+      let match = uploadedImgRawUrl.match(regex)
+      const uploadedImgRawUrlLocal = "/api/img?url=" + match[2]
       //insert the image to the editor
-      store.editor.textVal += `![${imgFileName}](${uploadedImgRawUrl})`
+      store.editor.textVal += `\n![${imgFileName}](${uploadedImgRawUrlLocal})`
       successMsg(iT('gist.image_upload_success'))
     }).catch((err) => {
       console.log(err)
       errorMsg(iT('gist.image_upload_failed'))
+      errorNotification(iT('hint.no_gist_repo'), iT('hint.no_gist_repo_hint'))
     }).finally(() => {
       store.app.isNewGistFileModalShow = false
       isModalActionLoading.value = false
     })
   };
 }
-*/
 
 
 //Editor clean handler
