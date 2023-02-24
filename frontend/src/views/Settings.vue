@@ -10,6 +10,9 @@
       <n-form-item :label="$t('settings.silent_mode')">
         <n-switch v-model:value="model.silentMode"/>
       </n-form-item>
+      <n-form-item :label="$t('settings.default_expand_all')">
+        <n-switch v-model:value="model.defaultExpandAll"/>
+      </n-form-item>
       <n-row :gutter="[0, 24]">
         <n-col :span="24">
           <div style="display: flex; justify-content: flex-end">
@@ -41,6 +44,7 @@ onMounted(() => {
   model.value.imgRepo = localStorage.getItem('imgRepo')
   model.value.autoSave = localStorage.getItem('autoSave') === 'true'
   model.value.silentMode = localStorage.getItem('silentMode') === 'true'
+  model.value.defaultExpandAll = localStorage.getItem('defaultExpandAll') === 'true'
 })
 
 
@@ -50,12 +54,14 @@ interface ModelType {
   imgRepo: string | null
   autoSave: boolean
   silentMode: boolean
+  defaultExpandAll: boolean
 }
 
 const model = ref<ModelType>({
   imgRepo: null,
   autoSave: true,
-  silentMode: false
+  silentMode: false,
+  defaultExpandAll: true,
 })
 
 const handleSaveButtonClick = () => {
@@ -64,10 +70,12 @@ const handleSaveButtonClick = () => {
   localStorage.setItem('imgRepo', model.value.imgRepo as string)
   localStorage.setItem('autoSave', model.value.autoSave.toString())
   localStorage.setItem('silentMode', model.value.silentMode.toString())
+  localStorage.setItem('defaultExpandAll', model.value.defaultExpandAll.toString())
   //update store
   store.editor.imgRepo = model.value.imgRepo as string
   store.editor.autoSave = model.value.autoSave
   store.app.silentMode = model.value.silentMode
+  store.menu.defaultExpandAll = model.value.defaultExpandAll
 }
 
 </script>

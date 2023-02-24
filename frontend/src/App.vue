@@ -56,6 +56,7 @@ onMounted(() => {
   store.editor.imgRepo = localStorage.getItem('imgRepo') || ''
   store.editor.autoSave = localStorage.getItem('autoSave') === 'true'
   store.app.silentMode = localStorage.getItem('silentMode') === 'true'
+  store.menu.defaultExpandAll = localStorage.getItem('defaultExpandAll') === 'true'
 })
 
 

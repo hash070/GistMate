@@ -23,6 +23,8 @@
               v-model:value="store.menu.activeKey"
               @update:expanded-keys="handleMenuExpand"
               @update:value="handleMenuClick"
+              :default-expand-all="store.menu.defaultExpandAll"
+              :watch-props="['defaultExpandedKeys']"
               :collapsed="collapsed"
               :collapsed-width="64"
               :indent="12"

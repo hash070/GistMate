@@ -31,6 +31,7 @@ export const store = reactive({
         currentGistCollectionKey: '' as string,
         createNewGistFileName: '' as string,
         avatar: '/img/github-logo.ico' as string,
+        defaultExpandAll: false as boolean,
     },
     editor: {
         textVal: "",
