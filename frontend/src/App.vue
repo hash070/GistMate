@@ -2,7 +2,7 @@
 import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
-import {NButton, NConfigProvider, NInput, NModal} from 'naive-ui'
+import {NButton, NConfigProvider, NDivider, NInput, NModal} from 'naive-ui'
 import {handleAxiosError, iT, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
@@ -77,18 +77,27 @@ onMounted(() => {
         :title="$t('hint.input_key')"
         :positive-text="$t('login.submit')"
     >
+      <a style="display: flex;justify-content: center;outline: none" href="	https://github.com/login/oauth/authorize?client_id=21ade8c504c134ae481e&redirect_uri=https://gm.a.com/api/oauth/callback&scope=gist%20user:email">
+        <img src="/img/github-logo.ico" alt="github" height="48">
+      </a>
+      <h3 style="text-align: center">{{$t('hint.oauth')}}</h3>
+      <n-divider >
+        {{ $t('hint.or')}}
+      </n-divider>
       <n-input
           v-model:value="gistKey"
           :placeholder="$t('hint.api_key')"
           class="mb-4"
       />
-      <n-button
-          :loading="isLoading"
-          :disabled="gistKey === ''"
-          @click="onKeySubmit"
-      >
-        {{ $t('login.submit') }}
-      </n-button>
+      <div style="display: flex;justify-content: end">
+        <n-button
+            :loading="isLoading"
+            :disabled="gistKey === ''"
+            @click="onKeySubmit"
+        >
+          {{ $t('login.submit') }}
+        </n-button>
+      </div>
     </n-modal>
   </n-config-provider>
 

@@ -18,6 +18,8 @@
     "no_gist_repo_hint": "Please go to settings to set a valid gist repository address key for images",
     "yes": "Yes",
     "no": "No",
+    "or": "Or",
+    "oauth": "Login with github",
     "input_key": "Please input your GitHub gist api key",
     "api_key": "GitHub gist API Key",
     "input_new_gist_collection": "Please input new gist collection title",
