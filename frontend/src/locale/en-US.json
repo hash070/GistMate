@@ -9,7 +9,9 @@
     "auto_save": "Default auto save the editor content",
     "silent_mode": "Silent mode",
     "default_expand_all": "Default expand all gist collections",
-    "setup_img_upload_repo": "Setup image upload repository"
+    "setup_img_upload_repo": "Setup image upload repository",
+    "proxy_url": "Proxy url",
+    "proxy": "Proxy"
   },
   "hint": {
     "network_success": "Network success",

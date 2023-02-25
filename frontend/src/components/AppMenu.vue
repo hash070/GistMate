@@ -284,13 +284,15 @@ import {IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/ico
 import axios from "axios";
 import {
   deleteGist,
-  errorMsg, errorNotification,
+  errorMsg,
+  errorNotification,
   finishLoadingBar,
   getDialog,
   getNoInterceptorAxios,
-  infoMsg, infoNotification,
+  infoMsg,
   iT,
-  loadGistsDataToMenu, randomString,
+  loadGistsDataToMenu,
+  randomString,
   startLoadingBar,
   successMsg,
   updateGistData
@@ -584,6 +586,12 @@ const handleMenuClick = (key: string, item: MenuOption) => {
     store.loading.editor = true;
     store.editor.openingFile = true;
     startLoadingBar()
+
+    //get proxy settings
+    if (localStorage.getItem('proxy') === 'true') {
+      key = "/api/proxy/userContent?url=" + key
+    }
+
     getNoInterceptorAxios().request({
       method: 'get',
       url: key,
@@ -602,6 +610,7 @@ const handleMenuClick = (key: string, item: MenuOption) => {
       console.log('isCurrentGistPublic:', isCurrentGistPublic.value)
     }).catch(function (error) {
       console.log(error);
+      errorMsg(iT('hint.network_error'))
     }).finally(() => {
       finishLoadingBar()
       store.loading.editor = false

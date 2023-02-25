@@ -3,14 +3,7 @@ import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
 import {NButton, NConfigProvider, NDivider, NInput, NModal} from 'naive-ui'
-import {
-  errorMsg,
-  handleAxiosError, infoMsg,
-  iT,
-  loadGistsDataToMenu,
-  setMenuOptionsFromAxiosResponse,
-  successMsg
-} from "./utils/util";
+import {handleAxiosError, infoMsg, iT, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
 import {useI18n} from "vue-i18n";
@@ -82,6 +75,11 @@ onMounted(() => {
   store.editor.autoSave = localStorage.getItem('autoSave') === 'true'
   store.app.silentMode = localStorage.getItem('silentMode') === 'true'
   store.menu.defaultExpandAll = localStorage.getItem('defaultExpandAll') === 'true'
+
+  //check proxy setting
+  if (localStorage.getItem('proxy') === "true" && localStorage.getItem('proxyUrl') && localStorage.getItem('proxyUrl') !== "") {
+    axios.defaults.baseURL = localStorage.getItem('proxyUrl') || ''
+  }
 })
 
 

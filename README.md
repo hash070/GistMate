@@ -13,6 +13,7 @@ With GistMate, you can get the most out of GitHub Gist's reliable and convenient
   - [x] Chinese
 - [x] Integrate with GitHub OAuth
 - [x] Upload and attach images to your Gists
+- [x] Proxy GitHub API to access your Gists esaier and faster
 - [ ] Search for Gist notes by title, content, or tag
 - [ ] Tag Gist notes for better organization and management
 - [ ] Bookmark Gist notes for quick access

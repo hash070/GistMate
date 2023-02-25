@@ -16,6 +16,12 @@
       <n-form-item :label="$t('settings.default_expand_all')">
         <n-switch v-model:value="model.defaultExpandAll"/>
       </n-form-item>
+      <n-form-item :label="$t('settings.proxy_url')">
+        <n-input v-model:value="model.proxyUrl"/>
+      </n-form-item>
+      <n-form-item :label="$t('settings.proxy')">
+        <n-switch v-model:value="model.proxy"/>
+      </n-form-item>
       <n-row :gutter="[0, 24]">
         <n-col :span="24">
           <div style="display: flex; justify-content: flex-end">
@@ -49,6 +55,8 @@ onMounted(() => {
   model.value.autoSave = localStorage.getItem('autoSave') === 'true'
   model.value.silentMode = localStorage.getItem('silentMode') === 'true'
   model.value.defaultExpandAll = localStorage.getItem('defaultExpandAll') === 'true'
+  model.value.proxyUrl = localStorage.getItem('proxyUrl') as string
+  model.value.proxy = localStorage.getItem('proxy') === 'true'
 })
 
 
@@ -59,6 +67,8 @@ interface ModelType {
   autoSave: boolean
   silentMode: boolean
   defaultExpandAll: boolean
+  proxyUrl: string
+  proxy: boolean
 }
 
 const model = ref<ModelType>({
@@ -66,6 +76,8 @@ const model = ref<ModelType>({
   autoSave: true,
   silentMode: false,
   defaultExpandAll: true,
+  proxyUrl: '',
+  proxy: false
 })
 
 const handleSaveButtonClick = () => {
@@ -75,11 +87,19 @@ const handleSaveButtonClick = () => {
   localStorage.setItem('autoSave', model.value.autoSave.toString())
   localStorage.setItem('silentMode', model.value.silentMode.toString())
   localStorage.setItem('defaultExpandAll', model.value.defaultExpandAll.toString())
+  localStorage.setItem('proxyUrl', model.value.proxyUrl.toString())
+  localStorage.setItem('proxy', model.value.proxy.toString())
   //update store
   store.editor.imgRepo = model.value.imgRepo as string
   store.editor.autoSave = model.value.autoSave
   store.app.silentMode = model.value.silentMode
   store.menu.defaultExpandAll = model.value.defaultExpandAll
+
+  if (model.value.proxy) {
+    axios.defaults.baseURL = model.value.proxyUrl
+  }else {
+    axios.defaults.baseURL = "https://api.github.com"
+  }
 }
 
 

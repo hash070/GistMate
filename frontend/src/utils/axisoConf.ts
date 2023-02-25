@@ -15,6 +15,14 @@ axios.interceptors.request.use(
     config => {
         // before request is sent
         config.headers.set('Authorization', "Bearer " + localStorage.getItem('gistKey'))
+        console.log('URL:', config.url)
+
+        //get proxy settings
+        if (localStorage.getItem('proxy') === 'true'){
+            //base: https://api.github.com
+            config.url = '/api/proxy/ghapi?url=' + config.url
+        }
+
         startLoadingBar()
         return config
     },
