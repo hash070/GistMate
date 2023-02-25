@@ -717,7 +717,7 @@ const handleUploadImage = (event: any, insertImage: any, files: any) => {
 }
 */
 
-//Worked, but seems not a good way
+//Worked, but seems not a good way, needs a server to process the image
 const handleUploadImage = (event: any, insertImage: any, files: any) => {
   console.log('handleUploadImage:', 'event:', event, 'InsertImage: ', insertImage, "files:", files)
   const imgFileName = randomString(16)

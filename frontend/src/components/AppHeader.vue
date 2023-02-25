@@ -70,7 +70,7 @@ const handleAvatarSelect = (key: string | number) => {
       negativeText: iT('hint.no'),
       onPositiveClick: () => {
         errorMsg(iT('login.failed'))
-        localStorage.removeItem('gistKey')
+        localStorage.clear()
         window.location.reload()
       }
     })

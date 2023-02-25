@@ -1,6 +1,9 @@
 <template>
   <div class="settings">
     <n-form ref="formRef" :model="model" style="margin: 2rem">
+      <n-button @click="setUpImageUploadRepo" type="primary" style="margin: 1rem 0">
+        {{ $t('settings.setup_img_upload_repo') }}
+      </n-button>
       <n-form-item :label="$t('settings.img_repo')">
         <n-input v-model:value="model.imgRepo"/>
       </n-form-item>
@@ -17,7 +20,6 @@
         <n-col :span="24">
           <div style="display: flex; justify-content: flex-end">
             <n-button
-                :disabled="model.imgRepo === null||model.imgRepo === ''"
                 round
                 type="primary"
                 @click="handleSaveButtonClick"
@@ -37,6 +39,8 @@
 import {FormInst, NButton, NCol, NForm, NFormItem, NInput, NRow, NSwitch} from "naive-ui";
 import {onMounted, ref} from "vue";
 import {store} from "../store";
+import axios from "axios";
+import {getDialog, infoMsg, iT, successMsg} from "../utils/util";
 
 onMounted(() => {
   console.log('Settings mounted')
@@ -76,6 +80,43 @@ const handleSaveButtonClick = () => {
   store.editor.autoSave = model.value.autoSave
   store.app.silentMode = model.value.silentMode
   store.menu.defaultExpandAll = model.value.defaultExpandAll
+}
+
+
+//set up img upload repo
+const setUpImageUploadRepo = () => {
+  getDialog().warning({
+    title: iT('hint.setup_img_upload_repo'),
+    content: iT('hint.setup_img_upload_repo_confirm'),
+    positiveText: iT('hint.yes'),
+    negativeText: iT('hint.no'),
+    onPositiveClick: () => {
+      let body = {
+        "description": "img",
+        "public": false,
+        "files": {
+          "meta.md": {
+            "content": "# Hello [GistMate](https://github.com/hash070/GistMate) \n\nDo not delete this gist if you don't know what are you doing"
+          }
+        }
+      }
+      console.log('body:', body)
+      axios.post("https://api.github.com/gists", body)
+          .then((res) => {
+            console.log("img repo", res);
+            successMsg(iT('hint.setup_img_upload_repo_success'))
+            model.value.imgRepo = res.data.id;
+            localStorage.setItem('imgRepo', res.data.id)
+          })
+          .catch((err) => {
+            console.log(err);
+            infoMsg(iT('hint.request_failed'))
+          })
+          .finally(() => {
+          })
+    }
+  })
+
 }
 
 </script>

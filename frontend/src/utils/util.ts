@@ -134,8 +134,14 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
             if (gist.description === "") {
                 gist.description = iT('gist.untitled')
             }
+
             //if the description is "img" or "pic" or "i" or "p", don't show it in menu
             if (gist.description === "img" || gist.description === "pic" || gist.description === "i" || gist.description === "p") {
+                if (localStorage.getItem('imgRepo') === null || localStorage.getItem('imgRepo') === "")//if imgRepo is not set, try to set it to the first gist with the related description
+                {
+                    localStorage.setItem('imgRepo', gist.id)
+                    console.log('imgRepo detected:', localStorage.getItem('imgRepo'))
+                }
                 return
             }
             tempMenuOptions = [
@@ -225,7 +231,7 @@ export const handleAxiosError = (err: any) => {
     //403 forbidden
     if (err.response.status === 403) {
         errorMsg(iT('login.failed'))
-        localStorage.removeItem('gistKey')
+        localStorage.clear()
         store.app.isKeyInputModalShow = true
         return
     }

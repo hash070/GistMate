@@ -8,7 +8,8 @@
     "img_repo": "Image repository",
     "auto_save": "Default auto save the editor content",
     "silent_mode": "Silent mode",
-    "default_expand_all": "Default expand all gist collections"
+    "default_expand_all": "Default expand all gist collections",
+    "setup_img_upload_repo": "Setup image upload repository"
   },
   "hint": {
     "network_success": "Network success",
@@ -41,7 +42,10 @@
     "delete_gist_collection_action_started": "Delete gist collection action started",
     "delete_gist_collection_action_success": "Delete gist collection action success",
     "delete_gist_collection_action_failed": "Delete gist collection action failed",
-    "delete_gist_collection_action_cancelled": "Delete gist collection action cancelled"
+    "delete_gist_collection_action_cancelled": "Delete gist collection action cancelled",
+    "setup_img_upload_repo": "Are you sure to set up a new image upload repository?",
+    "setup_img_upload_repo_confirm": "You are going to set up a new image upload repository. Setting up multiple image repositories is not recommended(Multiple meaningless image repositories will be created.); if you already have an image gist repository, please manually enter your existing image repository key.",
+    "setup_img_upload_repo_success": "Setup image upload repository success"
   },
   "login": {
     "submit": "Submit",
