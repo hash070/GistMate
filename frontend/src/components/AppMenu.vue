@@ -397,16 +397,8 @@ onMounted(() => {
   store.editor.filename = ''
   isInEditMode.value = false
   store.editor.openingFile = false
-  const gistKey = localStorage.getItem('gistKey')
-  if (gistKey) {
-    console.log('gist key detected, trying to login')
-    loadGistsDataToMenu();
-  } else {
-    console.log('gistKey is null, please input your gist key')
-    infoMsg(iT('hint.input_key'))
-    // infoMsg(iT('hint.input_key'))
-    store.app.isKeyInputModalShow = true
-  }
+  if (localStorage.getItem('gistKey')) loadGistsDataToMenu();
+  else return
 
   //setup auto save interval
   //Interval to check if the last typing date is 3 seconds later than now
@@ -645,6 +637,8 @@ const handleNewGistFile = () => {
     loadGistsDataToMenu()
     //set selected key to the new file
     store.menu.activeKey = res.data.files[store.menu.createNewGistFileName].raw_url
+    //update currentGistId
+    currentGistId.value = store.menu.currentGistCollectionKey
     cleanUpEditor()
     store.editor.textVal = "# Hello [GistMate](https://github.com/hash070/GistMate)"
     store.editor.filename = store.menu.createNewGistFileName
@@ -756,7 +750,14 @@ const handleUploadImage = (event: any, insertImage: any, files: any) => {
       let match = uploadedImgRawUrl.match(regex)
       const uploadedImgRawUrlLocal = "/api/img?url=" + match[2]
       //insert the image to the editor
-      store.editor.textVal += `\n![${imgFileName}](${uploadedImgRawUrlLocal})`
+      // store.editor.textVal += `\n![${imgFileName}](${uploadedImgRawUrlLocal})`
+      insertImage({
+        url:
+            `${uploadedImgRawUrlLocal}`,
+        desc: `${imgFileName}`,
+        // width: 'auto',
+        // height: 'auto',
+      });
       successMsg(iT('gist.image_upload_success'))
     }).catch((err) => {
       console.log(err)

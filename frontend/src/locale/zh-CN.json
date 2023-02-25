@@ -8,7 +8,7 @@
     "unknown_error": "未知错误",
     "yes": "是",
     "no": "否",
-    "input_key": "请输入您的 GitHub gist API Key",
+    "login": "需要授权以获取GitHub Gist访问权限",
     "api_key": "GitHub gist API Key",
     "input_new_gist_collection": "请输入新的 Gist 集合的标题",
     "input_new_gist_file_name": "请输入第一个 Gist 文件的名称",

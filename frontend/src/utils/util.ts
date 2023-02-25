@@ -228,8 +228,8 @@ export const handleAxiosError = (err: any) => {
         errorMsg(iT('hint.network_error'))
         return
     }
-    //403 forbidden
-    if (err.response.status === 403) {
+    //403 forbidden or 401 unauthorized
+    if (err.response.status === 403 || err.response.status === 401) {
         errorMsg(iT('login.failed'))
         localStorage.clear()
         store.app.isKeyInputModalShow = true

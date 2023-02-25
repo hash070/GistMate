@@ -8,7 +8,7 @@
     "unknown_error": "未知のエラー",
     "yes": "はい",
     "no": "いいえ",
-    "input_key": "GitHub gist API キーを入力してください",
+    "login": "GitHub Gist のアクセス権を取得するには認証が必要です",
     "api_key": "GitHub gist API キー",
     "input_new_gist_collection": "新しい Gist コレクションのタイトルを入力してください",
     "input_new_gist_file_name": "最初の Gist ファイルの名前を入力してください",

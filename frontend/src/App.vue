@@ -3,11 +3,19 @@ import AppHeader from "./components/AppHeader.vue";
 import {onMounted, ref} from 'vue'
 import type {GlobalTheme} from 'naive-ui'
 import {NButton, NConfigProvider, NDivider, NInput, NModal} from 'naive-ui'
-import {handleAxiosError, iT, setMenuOptionsFromAxiosResponse, successMsg} from "./utils/util";
+import {
+  errorMsg,
+  handleAxiosError, infoMsg,
+  iT,
+  loadGistsDataToMenu,
+  setMenuOptionsFromAxiosResponse,
+  successMsg
+} from "./utils/util";
 import axios from "axios";
 import {store} from "./store";
 import {useI18n} from "vue-i18n";
 import {changeMDELanguage} from "./utils/mdEditor";
+import {useRouter} from "vue-router";
 
 const {t, locale} = useI18n();
 
@@ -16,6 +24,8 @@ const theme = ref<GlobalTheme | null>(null)
 
 const isLoading = ref(false)
 const gistKey = ref('')
+
+const router = useRouter()
 
 function onKeySubmit() {
   localStorage.setItem('gistKey', gistKey.value)
@@ -52,6 +62,21 @@ onMounted(() => {
     localStorage.setItem('language', 'en-US')
   }
 
+  //check if gistKey exist in localStorage
+  if (localStorage.getItem('gistKey')) {
+    console.log('gist key detected')
+  } else {
+    console.log('gistKey is null, please input your gist key')
+    infoMsg(iT('hint.login'))
+    // infoMsg(iT('hint.login'))
+    store.app.isKeyInputModalShow = true
+  }
+
+  //set default settings, if settings not exist in localStorage
+  if (!localStorage.getItem('autoSave')) localStorage.setItem('autoSave', 'true')
+  if (!localStorage.getItem('silentMode')) localStorage.setItem('silentMode', 'false')
+  if (!localStorage.getItem('defaultExpandAll')) localStorage.setItem('defaultExpandAll', 'true')
+
   //load localStorage data to store
   store.editor.imgRepo = localStorage.getItem('imgRepo') || ''
   store.editor.autoSave = localStorage.getItem('autoSave') === 'true'
@@ -74,15 +99,16 @@ onMounted(() => {
         :loading="isLoading"
         style="max-width: 400px"
         preset="card"
-        :title="$t('hint.input_key')"
+        :title="$t('hint.login')"
         :positive-text="$t('login.submit')"
     >
-      <a style="display: flex;justify-content: center;outline: none" href="	https://github.com/login/oauth/authorize?client_id=21ade8c504c134ae481e&redirect_uri=https://gm.a.com/api/oauth/callback&scope=gist%20user:email">
+      <a style="display: flex;justify-content: center;outline: none"
+         href="	https://github.com/login/oauth/authorize?client_id=21ade8c504c134ae481e&redirect_uri=https://gistmate.hash070.com/api/oauth/callback&scope=gist%20user:email">
         <img src="/img/github-logo.ico" alt="github" height="48">
       </a>
-      <h3 style="text-align: center">{{$t('hint.oauth')}}</h3>
-      <n-divider >
-        {{ $t('hint.or')}}
+      <h3 style="text-align: center">{{ $t('hint.oauth') }}</h3>
+      <n-divider>
+        {{ $t('hint.or') }}
       </n-divider>
       <n-input
           v-model:value="gistKey"
