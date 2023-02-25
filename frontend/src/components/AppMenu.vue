@@ -318,8 +318,6 @@ const handleSave = async (text: string, html?: string) => {
       await updateGistData(currentGistId.value, text)
       //update the menu
       loadGistsDataToMenu();
-      //restore the selected menu key
-      store.menu.activeKey = res.data.files[store.editor.filename].raw_url
     }).catch((err) => {
       console.log(err)
       errorMsg(iT('hint.file_name_update_failed'))

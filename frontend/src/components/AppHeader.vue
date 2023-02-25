@@ -19,6 +19,10 @@
                      class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
           {{ $t("settings.settings") }}
         </router-link>
+        <router-link to="/docs"
+                     class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+          {{ $t("docs.docs") }}
+        </router-link>
       </div>
       <!-- Middle text -->
       <div class="flex">
@@ -29,6 +33,8 @@
 
       <!-- Right buttons -->
       <div class="flex">
+        <a href="https://github.com/hash070" target="_blank"
+           class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{{$t('author')}}</a>
         <a href="https://github.com/hash070/GistMate" target="_blank"
            class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">GitHub</a>
         <div

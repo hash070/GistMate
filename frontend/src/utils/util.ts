@@ -200,6 +200,8 @@ export const updateGistData = async (gistId: string, content: any) => {
         });
         console.log(res);
         successMsg(iT('hint.save_success'));
+        //restore the selected menu key
+        store.menu.activeKey = res.data.files[store.editor.filename].raw_url
     } catch (err) {
         console.log(err);
         errorMsg(iT('hint.save_failed'));
