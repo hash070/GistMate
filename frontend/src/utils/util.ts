@@ -2,8 +2,7 @@ import {createDiscreteApi, NIcon} from 'naive-ui'
 import {store} from "../store"
 import {i18n} from "../main";
 import {Component, h} from "vue";
-import {BookOutline as BookIcon, LibraryOutline as LibraryIcon} from "@vicons/ionicons5";
-import {IconFilePlus, IconTrashX} from '@tabler/icons-vue';
+import {IconBook2, IconFile, IconFilePlus, IconTrashX} from '@tabler/icons-vue';
 import axios from "axios";
 import {DialogApiInjection} from "naive-ui/es/dialog/src/DialogProvider";
 
@@ -149,14 +148,14 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                 {
                     label: gist.description,
                     key: gist.id,
-                    icon: renderIcon(LibraryIcon),
+                    icon: renderIcon(IconBook2),
                     //file is a object, not an array
                     //need to use Object.keys to get the keys
                     children: Object.keys(gist.files).map((child: any) => {
                         return {
                             label: gist.files[child].filename,
                             key: gist.files[child].raw_url,
-                            icon: renderIcon(BookIcon),
+                            icon: renderIcon(IconFile),
                             parentKey: gist.id,
                             isPublic: gist.public,
                             updatedAt: gist.updated_at,

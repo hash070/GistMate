@@ -2,6 +2,7 @@
   "hello": "Hello World",
   "home": "Home",
   "language": "Language",
+  "author": "Author",
   "settings": {
     "settings": "Settings",
     "save": "Save",
@@ -12,6 +13,18 @@
     "setup_img_upload_repo": "Setup image upload repository",
     "proxy_url": "Proxy url",
     "proxy": "Proxy"
+  },
+  "docs": {
+    "docs": "Docs",
+    "writing": "Documentation is still in progress, please wait patiently",
+    "intro": {
+      "i": "Introduction",
+      "desc_content": "Welcome to GistMate, a web application that helps you manage and organize your Gist notes on GitHub. With GistMate, you can easily create, edit, and search for Gist notes, as well as add tags and bookmarks to them for better organization. In this guide, we will walk you through the features of GistMate and show you how to use them."
+    },
+    "getting_started": {
+      "i": "Getting Started",
+      "desc_content": "To get started, you need to log in to GistMate with your GitHub account. You can do this by clicking the Login button in the upper right corner of the page. After logging in, you will be able to view all your Gist notes on GitHub. You can also create new Gist notes, edit existing Gist notes, and search for Gist notes by title or content."
+    }
   },
   "hint": {
     "network_success": "Network success",

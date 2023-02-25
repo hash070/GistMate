@@ -17,6 +17,9 @@
           trigger="none"
           style="max-height: calc(100vh - 3rem)"
       >
+        <n-alert title="Info" type="info" style="margin: 1rem 0">
+          {{ $t('docs.writing') }}
+        </n-alert>
         <div id="intro">
           <n-h1 align-text>
             <n-text type="primary">
@@ -46,7 +49,7 @@
 
 <script setup lang="ts">
 
-import {NAnchor, NAnchorLink, NH1, NScrollbar, NText} from "naive-ui";</script>
+import {NAlert, NAnchor, NAnchorLink, NH1, NScrollbar, NText} from "naive-ui";</script>
 
 <style scoped lang="scss">
 .docs {
