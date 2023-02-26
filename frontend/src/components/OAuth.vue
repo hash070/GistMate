@@ -8,6 +8,7 @@
 import {useRoute, useRouter} from 'vue-router'
 import {handleAxiosError, infoNotification, iT, setMenuOptionsFromAxiosResponse, successMsg} from "../utils/util";
 import axios from "axios";
+import {store} from "../store";
 
 const route = useRoute()
 const router = useRouter()
@@ -30,6 +31,7 @@ axios.get('/gists' + '?time_stamp=' + new Date().getTime())
       // process data (array) and push into store.menuOptions
       setMenuOptionsFromAxiosResponse(res)
       infoNotification('Login Success', 'Welcome ' + username)
+      store.app.isKeyInputModalShow = false
     })
     .catch((err) => {
       handleAxiosError(err)
