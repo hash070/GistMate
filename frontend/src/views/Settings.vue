@@ -121,7 +121,7 @@ const setUpImageUploadRepo = () => {
         }
       }
       console.log('body:', body)
-      axios.post("https://api.github.com/gists", body)
+      axios.post("/gists", body)
           .then((res) => {
             console.log("img repo", res);
             successMsg(iT('hint.setup_img_upload_repo_success'))
