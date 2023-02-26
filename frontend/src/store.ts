@@ -20,6 +20,7 @@ export const store = reactive({
         isNewGistFileModalShow: false,
         language: 'en-US' as string,
         silentMode: false as boolean,
+        useLskyImage: false as boolean,
     },
     gistsData: [] as Array<object>,
     loading: {

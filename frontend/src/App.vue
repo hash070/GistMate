@@ -75,6 +75,7 @@ onMounted(() => {
   store.editor.autoSave = localStorage.getItem('autoSave') === 'true'
   store.app.silentMode = localStorage.getItem('silentMode') === 'true'
   store.menu.defaultExpandAll = localStorage.getItem('defaultExpandAll') === 'true'
+  store.app.useLskyImage = localStorage.getItem('useLskyImage') === 'true'
 
   //check proxy setting
   if (localStorage.getItem('proxy') === "true" && localStorage.getItem('proxyUrl') && localStorage.getItem('proxyUrl') !== "") {

@@ -288,6 +288,7 @@ import {
   errorNotification,
   finishLoadingBar,
   getDialog,
+  getLskyAxios,
   getNoInterceptorAxios,
   infoMsg,
   iT,
@@ -719,12 +720,56 @@ const handleUploadImage = (event: any, insertImage: any, files: any) => {
 */
 
 //Worked, but seems not a good way, needs a server to process the image
-const handleUploadImage = (event: any, insertImage: any, files: any) => {
+const handleUploadImage = (event: any, insertImage: any, files: [any]) => {
   console.log('handleUploadImage:', 'event:', event, 'InsertImage: ', insertImage, "files:", files)
   const imgFileName = randomString(16)
   console.log('imgFileName:', imgFileName)
 
-  if (store.editor.imgRepo === '') errorNotification(iT('hint.no_gist_repo'), iT('hint.no_gist_repo_hint'))
+  console.log("isUseLskyImage:", store.app.useLskyImage)
+
+  //if useLskyImage is true, upload image to lsky
+  if (store.app.useLskyImage) {
+    console.log("Uploading image file:", files[0])
+
+    // Create a new FormData object
+    const formData = new FormData();
+
+    // Append the file to the FormData object
+    formData.append("file", files[0]);
+
+    console.log("image upload formData:", formData)
+
+    //upload an image with axios
+    if (localStorage.getItem('lskyAPI')) {
+      startLoadingBar()
+      getLskyAxios().post(localStorage.getItem("lskyAPI") as string + "/upload", formData)
+          .then((res) => {
+            console.log("image upload success:", res)
+            // insertImage(res.data.data.links.markdown)
+            insertImage({
+              url: res.data.data.links.url,
+              desc: res.data.data.origin_name,
+            });
+            successMsg(iT('gist.image_upload_success'))
+          })
+          .catch((err) => {
+            console.log('lsky upload failed', err)
+            errorMsg(iT('gist.image_upload_failed'))
+          })
+          .finally(() => {
+            finishLoadingBar()
+          })
+    } else {
+      errorMsg(iT('hint.lsky_api_not_set'))
+    }
+    return
+  }
+
+
+  if (store.editor.imgRepo === '') {
+    errorNotification(iT('hint.no_gist_repo'), iT('hint.no_gist_repo_hint'))
+    return
+  }
 
   console.log('UploadImage Gist Key:', store.editor.imgRepo)
   console.log("Uploading image file:", files[0])

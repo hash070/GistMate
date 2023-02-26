@@ -12,7 +12,10 @@
     "default_expand_all": "Default expand all gist collections",
     "setup_img_upload_repo": "Setup image upload repository",
     "proxy_url": "Proxy url",
-    "proxy": "Proxy"
+    "proxy": "Proxy",
+    "use_lsky": "Use lsky image upload",
+    "lsky_api": "Lsky API Address",
+    "lsky_token": "Lsky Token"
   },
   "docs": {
     "docs": "Docs",
@@ -32,6 +35,7 @@
     "unknown_error": "Unknown error",
     "img_gist_repo_err": "No Git repository was set for images, or the repository address key did not exist",
     "no_gist_repo_hint": "Please go to settings to set a valid gist repository address key for images",
+    "lsky_api_not_set": "Lsky API is not set",
     "yes": "Yes",
     "no": "No",
     "or": "Or",

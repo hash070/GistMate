@@ -187,6 +187,31 @@ export const getNoInterceptorAxios = () => {
     return noInterceptorAxios
 }
 
+
+//get axios instance for lsky-pro
+export const getLskyAxios = () => {
+    //axios with interceptor for lsky
+    let lskyAxios = axios.create()
+    lskyAxios.defaults.headers.common['Content-Type'] = 'multipart/form-data'
+
+    lskyAxios.interceptors.request.use(
+        config => {
+            // before request is sent
+            config.headers.set('Authorization', "Bearer " + localStorage.getItem('lskyToken'))
+            console.log("token:", localStorage.getItem('lskyToken'))
+            console.log('URL:', config.url)
+            startLoadingBar()
+            return config
+        },
+        error => {
+            // on request error
+            errorLoadingBar()
+            return Promise.reject(error)
+        }
+    )
+    return lskyAxios
+}
+
 //update gist data
 export const updateGistData = async (gistId: string, content: any) => {
     try {

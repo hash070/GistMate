@@ -12,6 +12,7 @@ With GistMate, you can get the most out of GitHub Gist's reliable and convenient
   - [x] Japanese
   - [x] Chinese
 - [x] Integrate with GitHub OAuth
+- [x] Integrate with [lsky-pro](https://github.com/lsky-org/lsky-pro) self-hosted photo album
 - [x] Upload and attach images to your Gists
 - [x] Proxy GitHub API to access your Gists esaier and faster
 - [ ] Search for Gist notes by title, content, or tag
