@@ -501,7 +501,7 @@ const onNewGistSubmit = () => {
     }
   }
   console.log('body:', body)
-  axios.post("https://api.github.com/gists", body)
+  axios.post("/gists", body)
       .then((res) => {
         store.app.isNewGistModalShow = false
         loadGistsDataToMenu()

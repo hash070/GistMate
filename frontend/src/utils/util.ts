@@ -209,7 +209,7 @@ export const updateGistData = async (gistId: string, content: any) => {
 
 //delete gist func
 export const deleteGist = (gistId: string) => {
-    axios.delete(`https://api.github.com/gists/${gistId}`)
+    axios.delete(`/gists/${gistId}`)
         .then((res) => {
             infoMsg(iT('hint.delete_gist_collection_success'))
             loadGistsDataToMenu()
