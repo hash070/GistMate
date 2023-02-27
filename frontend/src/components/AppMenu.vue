@@ -129,6 +129,17 @@
               </div>
               <n-button
                   icon-placement="left"
+                  @click="handleOpenGistInGitHub"
+              >
+                <template #icon>
+                  <n-icon>
+                    <IconExternalLink/>
+                  </n-icon>
+                </template>
+                {{ $t('hint.open_gist_file_in_github') }}
+              </n-button>
+              <n-button
+                  icon-placement="left"
                   strong secondary
                   type="error"
                   @click="handleDeleteGistFile"
@@ -280,7 +291,7 @@ import {
   NTooltip
 } from 'naive-ui'
 import {store} from '../store'
-import {IconLoader, IconLock, IconLockOpen, IconTrashX, IconX} from '@tabler/icons-vue';
+import {IconLoader, IconLock, IconLockOpen, IconTrashX, IconX, IconExternalLink} from '@tabler/icons-vue';
 import axios from "axios";
 import {
   deleteGist,
@@ -289,7 +300,7 @@ import {
   finishLoadingBar,
   getDialog,
   getLskyAxios,
-  getNoInterceptorAxios,
+  getNoInterceptorAxios, handleOpenGistInGitHub,
   infoMsg,
   iT,
   loadGistsDataToMenu,
@@ -553,6 +564,9 @@ const handleMenuClick = (key: string, item: MenuOption) => {
   //set current gist collection key
   store.menu.currentGistCollectionKey = item.parentKey as string
 
+  //set current gist html url
+  store.menu.currentGistHtmlUrl = item.parentHtmlUrl as string
+
   if (key === "create") {
     console.log('create new gist')
     store.app.isNewGistModalShow = true
@@ -739,7 +753,7 @@ const handleUploadImage = (event: any, insertImage: any, files: [any]) => {
 
     console.log("image upload formData:", formData)
 
-    //upload an image with axios
+    //upload an image with axios to lsky
     if (localStorage.getItem('lskyAPI')) {
       startLoadingBar()
       getLskyAxios().post(localStorage.getItem("lskyAPI") as string + "/upload", formData)

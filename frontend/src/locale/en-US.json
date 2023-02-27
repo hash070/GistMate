@@ -50,6 +50,7 @@
     "save_failed": "Save failed",
     "file_name_update_success": "File name update success",
     "file_name_update_failed": "File name update failed, duplicate file name is not allowed",
+    "open_gist_file_in_github": "Open gist file in github",
     "delete_gist_file_dialog_title": "Delete gist file",
     "delete_gist_file_dialog_content": "Are you sure to delete this gist file?",
     "delete_gist_file_action_started": "Delete gist file action started",

@@ -21,7 +21,7 @@ export const store = reactive({
         language: 'en-US' as string,
         silentMode: false as boolean,
         useLskyImage: false as boolean,
-        user: null as object | null,
+        user: null as any | null,
     },
     gistsData: [] as Array<object>,
     loading: {

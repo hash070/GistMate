@@ -7,7 +7,7 @@
           <n-avatar
               round
               :size="32"
-              :src=" store.app.user?store.app.user.avatar_url:store.menu.avatar"
+              :src="store.app.user?store.app.user.avatar_url:store.menu.avatar"
           />
         </n-dropdown>
 
