@@ -55,6 +55,12 @@ onMounted(() => {
     localStorage.setItem('language', 'en-US')
   }
 
+
+  //check proxy setting
+  if (localStorage.getItem('proxy') === "true" && localStorage.getItem('proxyUrl') && localStorage.getItem('proxyUrl') !== "") {
+    axios.defaults.baseURL = localStorage.getItem('proxyUrl') || ''
+  }
+
   //check if gistKey exist in localStorage
   if (localStorage.getItem('gistKey')) {
     console.log('gist key detected')
@@ -77,10 +83,15 @@ onMounted(() => {
   store.menu.defaultExpandAll = localStorage.getItem('defaultExpandAll') === 'true'
   store.app.useLskyImage = localStorage.getItem('useLskyImage') === 'true'
 
-  //check proxy setting
-  if (localStorage.getItem('proxy') === "true" && localStorage.getItem('proxyUrl') && localStorage.getItem('proxyUrl') !== "") {
-    axios.defaults.baseURL = localStorage.getItem('proxyUrl') || ''
-  }
+  //get user info
+  axios.get('/user')
+      .then((res) => {
+        console.log(res)
+        store.app.user = res.data
+      })
+      .catch((err) => {
+        handleAxiosError(err)
+      })
 })
 
 

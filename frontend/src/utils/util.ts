@@ -159,6 +159,7 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                             parentKey: gist.id,
                             isPublic: gist.public,
                             updatedAt: gist.updated_at,
+                            parentHtmlUrl: gist.html_url,
                             // to: '/gist/'+gist.id+'/'+child.filename
                         }
                     }).concat({// Add the delete object to the end of children array
@@ -168,6 +169,7 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                         parentKey: gist.id,
                         isPublic: gist.public,
                         updatedAt: gist.updated_at,
+                        parentHtmlUrl: gist.html_url,
                     }).concat({
                         label: iT('gist.delete_gist_collection'),
                         key: 'delete',
@@ -175,6 +177,7 @@ export const setMenuOptionsFromAxiosResponse = (res: any) => {
                         parentKey: gist.id,
                         isPublic: gist.public,
                         updatedAt: gist.updated_at,
+                        parentHtmlUrl: gist.html_url,
                     })
                 }
             ]
@@ -263,4 +266,10 @@ export const handleAxiosError = (err: any) => {
     }
     //other error
     errorMsg(iT('hint.unknown_error'))
+}
+
+export const handleOpenGistInGitHub = () => {
+    //open url in new tab(store.menu.currentGistCollectionKey)
+    window.open(store.menu.currentGistHtmlUrl + "#file-" + store.editor.filename.replace(".","-"), '_blank')
+    console.log("OpenLink:", store.menu.currentGistHtmlUrl)
 }

@@ -21,6 +21,7 @@ export const store = reactive({
         language: 'en-US' as string,
         silentMode: false as boolean,
         useLskyImage: false as boolean,
+        user: null as object | null,
     },
     gistsData: [] as Array<object>,
     loading: {
@@ -33,6 +34,7 @@ export const store = reactive({
         createNewGistFileName: '' as string,
         avatar: '/img/github-logo.ico' as string,
         defaultExpandAll: false as boolean,
+        currentGistHtmlUrl: '' as string,
     },
     editor: {
         textVal: "",

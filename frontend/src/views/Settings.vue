@@ -33,7 +33,7 @@
           <n-input v-model:value="model.lskyAPI"/>
         </n-form-item>
         <n-form-item :label="$t('settings.lsky_token')">
-          <n-input v-model:value="model.lskyToken"/>
+          <n-input v-model:value="model.lskyToken" type="password" show-password-on="click"/>
         </n-form-item>
         <n-row :gutter="[0, 24]">
           <n-col :span="24">
