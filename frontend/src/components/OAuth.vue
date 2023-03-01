@@ -22,9 +22,9 @@ const username = route.query.username;
 localStorage.setItem('gistKey', token as string)
 localStorage.setItem('username', username as string)
 
-//try to get gist data
-//get gist data, add time_stamp to avoid cache
-axios.get('/gists' + '?time_stamp=' + new Date().getTime())
+//async function may cause error
+/*
+  axios.get('/gists' + '?time_stamp=' + new Date().getTime())
     .then((res) => {
       successMsg(iT('login.success'))
       console.log(res)
@@ -40,6 +40,20 @@ axios.get('/gists' + '?time_stamp=' + new Date().getTime())
       //redirect to home page
       router.push('/')
     })
+    */
+//try to get gist data
+//get gist data, add time_stamp to avoid cache
+try {
+  const res = await axios.get('/gists' + '?time_stamp=' + new Date().getTime());
+  successMsg(iT('login.success'));
+  console.log(res);
+  setMenuOptionsFromAxiosResponse(res);
+  infoNotification('Login Success', 'Welcome ' + username);
+  store.app.isKeyInputModalShow = false;
+  router.push('/');
+} catch (err) {
+  handleAxiosError(err);
+}
 </script>
 
 <style scoped>
