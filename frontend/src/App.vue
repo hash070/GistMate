@@ -69,6 +69,7 @@ onMounted(() => {
     infoMsg(iT('hint.login'))
     // infoMsg(iT('hint.login'))
     store.app.isKeyInputModalShow = true
+    return
   }
 
   //set default settings, if settings not exist in localStorage

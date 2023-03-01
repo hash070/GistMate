@@ -44,13 +44,19 @@ localStorage.setItem('username', username as string)
 //try to get gist data
 //get gist data, add time_stamp to avoid cache
 try {
+  //log current url
+  console.log("call back url",window.location.href);
+
+  //test if token is valid
   const res = await axios.get('/gists' + '?time_stamp=' + new Date().getTime());
   successMsg(iT('login.success'));
   console.log(res);
   setMenuOptionsFromAxiosResponse(res);
   infoNotification('Login Success', 'Welcome ' + username);
   store.app.isKeyInputModalShow = false;
-  router.push('/');
+  // router.push('/');//don't know why this will cause error
+  //redirect to home page
+  window.location.href = '/';
 } catch (err) {
   handleAxiosError(err);
 }
