@@ -106,15 +106,15 @@ const model = ref<ModelType>({
 const handleSaveButtonClick = () => {
   console.log(model.value)
   //save to local storage
-  localStorage.setItem('imgRepo', model.value.imgRepo as string)
+  localStorage.setItem('imgRepo', model.value.imgRepo?.toString() as string)
   localStorage.setItem('autoSave', model.value.autoSave.toString())
   localStorage.setItem('silentMode', model.value.silentMode.toString())
   localStorage.setItem('defaultExpandAll', model.value.defaultExpandAll.toString())
-  localStorage.setItem('proxyUrl', model.value.proxyUrl.toString())
+  localStorage.setItem('proxyUrl', model.value.proxyUrl?.toString() as string)
   localStorage.setItem('proxy', model.value.proxy.toString())
   localStorage.setItem('useLskyImage', model.value.useLskyImage.toString())
-  localStorage.setItem('lskyAPI', model.value.lskyAPI.toString())
-  localStorage.setItem('lskyToken', model.value.lskyToken.toString())
+  localStorage.setItem('lskyAPI', model.value.lskyAPI?.toString() as string)
+  localStorage.setItem('lskyToken', model.value.lskyToken?.toString() as string)
   //update store
   store.editor.imgRepo = model.value.imgRepo as string
   store.editor.autoSave = model.value.autoSave
