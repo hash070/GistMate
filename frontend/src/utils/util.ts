@@ -270,6 +270,6 @@ export const handleAxiosError = (err: any) => {
 
 export const handleOpenGistInGitHub = () => {
     //open url in new tab(store.menu.currentGistCollectionKey)
-    window.open(store.menu.currentGistHtmlUrl + "#file-" + store.editor.filename.replace(".","-"), '_blank')
+    window.open(store.menu.currentGistHtmlUrl + "#file-" + store.editor.filename.replace(".","-").toLowerCase(), '_blank')
     console.log("OpenLink:", store.menu.currentGistHtmlUrl)
 }
